@@ -1,12 +1,3 @@
-/// A struct that represents a single data point of a [BarChart] dataset.
-// pub struct BarDatum<T>(String, f32, T);
-//
-// impl<T> BarDatum<T> {
-//     pub fn new(category: String, value: f32, key: T) -> Self {
-//         Self(category, value, key)
-//     }
-// }
-
 pub trait BarDatum<T> {
     fn get_category(&self) -> &T;
     fn get_value(&self) -> &f32;

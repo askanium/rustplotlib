@@ -59,28 +59,4 @@ impl<'a> BarChart<'a> {
         };
         Ok(())
     }
-
 }
-
-// impl<'a> Render for BarChart<'a> {
-//     type SVGNode = svg::Document;
-//
-//     fn to_svg(&self) -> Result<svg::Document, Error> {
-//         let rect = svg::node::element::Rectangle::new()
-//             .set("x", 0)
-//             .set("y", 0)
-//             .set("width", 100)
-//             .set("height", 50)
-//             .set("fill", "blue");
-//
-//         let mut document = svg::Document::new()
-//             .set("viewBox", (0, 0, 400, 200))
-//             .add(rect);
-//
-//         for boxed_dataset in self.view.datasets() {
-//             document.add(boxed_dataset.to_svg().unwrap());
-//         }
-//
-//         Ok(document)
-//     }
-// }
