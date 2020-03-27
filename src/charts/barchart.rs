@@ -6,7 +6,7 @@
 //!
 //! A [BarChart] should have at least one [ScaleBand] or [ScaleOrdinal] axis.
 
-use crate::{view, View, VerticalBarChartDataset};
+use crate::{view, View, VerticalBarDataset};
 use crate::charts::Render;
 use std::path::Path;
 use std::ffi::OsStr;
