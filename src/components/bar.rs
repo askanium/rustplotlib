@@ -67,7 +67,7 @@ impl<T: AsRef<str>> DatumRepresentation for Bar<T> {
             group.append(block);
         }
 
-        svg::save("bar-vert.svg", &group);
+        // svg::save("bar-vert.svg", &group).unwrap();
 
         Ok(group)
     }

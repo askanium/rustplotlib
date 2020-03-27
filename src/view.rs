@@ -6,7 +6,6 @@
 use crate::datasets::Dataset;
 use crate::components::DatumRepresentation;
 use svg::node::element::Group;
-use crate::Render;
 use svg::parser::Error;
 use svg;
 use svg::Node;
@@ -30,17 +29,13 @@ impl<'a> View<'a> {
     pub fn datasets(&self) -> &Vec<&'a dyn Dataset<'a>> {
         &self.datasets
     }
-}
 
-impl Render for View<'_> {
-    fn to_svg(&self) -> Result<Group, Error> {
+    pub fn to_svg(&self) -> Result<Group, Error> {
         let mut group = Group::new();
 
         for dataset in self.datasets.iter() {
             group.append(dataset.to_svg()?);
         }
-
-        svg::save("view.svg", &group);
 
         Ok(group)
     }

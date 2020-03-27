@@ -126,7 +126,6 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarDatas
             let child_svg = entry.to_svg()?;
             group.append(child_svg);
         }
-        svg::save("dataset.svg", &group);
 
         Ok(group)
     }
