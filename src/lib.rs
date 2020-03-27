@@ -37,6 +37,7 @@ pub use crate::scales::linear::ScaleLinear;
 pub use crate::scales::Scale;
 pub use crate::charts::Render;
 pub use crate::datasets::VerticalBarChartDataset;
+pub use crate::datasets::datum::BarDatum;
 
 #[cfg(test)]
 mod tests {

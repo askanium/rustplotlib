@@ -9,7 +9,7 @@ use crate::scales::{Scale, ScaleType};
 use std::collections::HashMap;
 use crate::colors::Color;
 
-mod datum;
+pub mod datum;
 
 /// A Dataset that represents data that should be visualized.
 pub struct VerticalBarChartDataset<'a, T: AsRef<str>> {
@@ -23,11 +23,12 @@ pub struct VerticalBarChartDataset<'a, T: AsRef<str>> {
 }
 
 impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarChartDataset<'a, T> {
+    /// Create a new empty instance of the dataset.
     pub fn new() -> Self {
         Self {
             entries: Vec::new(),
             categories: Vec::new(),
-            keys: vec!["".to_string()],
+            keys: vec![String::new()],
             colors: Color::color_scheme_10(),
             color_map: HashMap::new(),
             x_scale: None,
@@ -35,18 +36,22 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarChart
         }
     }
 
+    /// Set the scale for the X dimension.
     pub fn set_x_scale(&mut self, scale: &'a impl Scale<T>) {
         self.x_scale = Some(scale);
     }
 
+    /// Set the scale for the Y dimension.
     pub fn set_y_scale(&mut self, scale: &'a impl Scale<T>) {
         self.y_scale = Some(scale);
     }
 
+    /// Set the keys in case of a stacked bar chart.
     pub fn set_keys(&mut self, keys: Vec<String>) {
         self.keys = keys;
     }
 
+    /// Load and process a dataset of BarDatum points.
     pub fn load_data(&mut self, data: &Vec<impl BarDatum<T>>) -> Result<(), &str> {
         match self.x_scale {
             Some(scale) if scale.get_type() == ScaleType::Band => {},
@@ -101,11 +106,9 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarChart
         Ok(())
     }
 
-    fn add_bar(&mut self, bar: Bar<T>) {
-        self.entries.push(bar);
-    }
-
+    /// A shortcut method that will take care of creating the scales based on the data provided.
     pub fn from_data(data: &Vec<impl BarDatum<T>>) -> Self {
+        // TODO implement this method properly.
         Self {
             entries: Vec::new(),
             categories: Vec::new(),
@@ -117,6 +120,7 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarChart
         }
     }
 
+    /// Generate the SVG representation of the dataset.
     pub fn to_svg(&self) -> Result<svg::node::element::Group, Error> {
         let mut group = svg::node::element::Group::new();
 
@@ -127,6 +131,11 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarChart
         svg::save("dataset.svg", &group);
 
         Ok(group)
+    }
+
+    /// Add a [Bar] entry to the dataset entries list.
+    fn add_bar(&mut self, bar: Bar<T>) {
+        self.entries.push(bar);
     }
 
 }
