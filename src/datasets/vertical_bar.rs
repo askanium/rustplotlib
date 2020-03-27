@@ -7,6 +7,7 @@ use crate::{Scale, BarDatum};
 use crate::scales::ScaleType;
 use crate::components::DatumRepresentation;
 use crate::datasets::Dataset;
+use svg::node::element::Group;
 
 /// A Dataset that represents data that should be visualized.
 pub struct VerticalBarDataset<'a, T: AsRef<str>> {
@@ -137,8 +138,8 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarDatas
 
 }
 
-impl<'a, T: AsRef<str>> Dataset<'a> for VerticalBarDataset<'a, T> {
-//     fn get_entries(&self) -> &Vec<Bar<String>> {
-//         &self.entries
-//     }
+impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> Dataset<'a> for VerticalBarDataset<'a, T> {
+    fn to_svg(&self) -> Result<Group, Error> {
+        Ok(self.to_svg().unwrap())
+    }
 }

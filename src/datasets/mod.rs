@@ -1,12 +1,14 @@
 use crate::datasets::vertical_bar::VerticalBarDataset;
 use crate::components::DatumRepresentation;
+use svg::node::element::Group;
+use svg::parser::Error;
 
 pub mod vertical_bar;
 pub mod datum;
 
+// pub trait Dataset<'a> {
 pub trait Dataset<'a> {
-// pub trait Dataset<'a, T: DatumRepresentation> {
-//     fn get_entries(&self) -> &Vec<T>;
+    fn to_svg(&self) -> Result<Group, Error>;
 }
 
 // impl<'a> Render for dyn Dataset<'a> {

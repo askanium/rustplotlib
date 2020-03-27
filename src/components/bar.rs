@@ -1,6 +1,7 @@
 use crate::components::DatumRepresentation;
 use svg::parser::Error;
 use svg::node::Node;
+use svg::node::element::Group;
 
 /// Define the orientation of the bar chart.
 #[derive(Debug)]
@@ -45,10 +46,9 @@ impl<T: AsRef<str>> Bar<T> {
 }
 
 impl<T: AsRef<str>> DatumRepresentation for Bar<T> {
-    type Node = svg::node::element::Group;
 
-    fn to_svg(&self) -> Result<Self::Node, Error> {
-        let mut group = Self::Node::new()
+    fn to_svg(&self) -> Result<Group, Error> {
+        let mut group = Group::new()
             .set("transform", format!("translate({},0)", self.offset));
 
         let (x_attr, y_attr, width_attr, height_attr) = match self.orientation {
