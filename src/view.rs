@@ -31,7 +31,8 @@ impl<'a> View<'a> {
     }
 
     pub fn to_svg(&self) -> Result<Group, Error> {
-        let mut group = Group::new();
+        let mut group = Group::new()
+            .set("class", "g-view");
 
         for dataset in self.datasets.iter() {
             group.append(dataset.to_svg()?);

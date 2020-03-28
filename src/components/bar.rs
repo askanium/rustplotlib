@@ -1,7 +1,7 @@
-use crate::components::DatumRepresentation;
 use svg::parser::Error;
 use svg::node::Node;
 use svg::node::element::Group;
+use crate::components::DatumRepresentation;
 
 /// Define the orientation of the bar chart.
 #[derive(Debug)]

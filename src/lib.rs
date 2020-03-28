@@ -22,7 +22,7 @@
 //!
 //! TODO represent the structure visually
 
-mod charts;
+mod chart;
 mod view;
 mod scales;
 pub mod utils;
@@ -30,7 +30,7 @@ mod datasets;
 pub mod components;
 mod colors;
 
-pub use crate::charts::barchart::BarChart;
+pub use crate::chart::Chart;
 pub use crate::view::View;
 pub use crate::scales::band::ScaleBand;
 pub use crate::scales::linear::ScaleLinear;
