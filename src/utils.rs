@@ -11,3 +11,10 @@ impl Range {
         Self(0f32, 1f32)
     }
 }
+
+/// Define the orientation enum to aid in rendering and business logic.
+#[derive(Debug, Copy, Clone)]
+pub enum Orientation {
+    Horizontal,
+    Vertical,
+}

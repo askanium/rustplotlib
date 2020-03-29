@@ -1,21 +1,22 @@
-use crate::utils::Range;
+use crate::utils::{Range, Orientation};
 use std::cmp::max;
 use crate::scales::{Scale, ScaleType};
 use std::fmt;
 use std::hash::Hash;
 use std::collections::HashMap;
+use crate::components::axis::AxisTick;
 
 /// The scale to represent categorical data.
 #[derive(Debug)]
-pub struct ScaleBand<T: Hash + Eq + Copy> {
+pub struct ScaleBand {
     /// The domain limits of the dataset that the scale is going to represent.
-    domain: Vec<T>,
+    domain: Vec<String>,
     /// The range limits of the drawable area on the chart.
     range: Range,
     /// The offsets of each entry from domain.
     offsets: Vec<f32>,
     /// The hash map that maps domain keys with corresponding offset entries.
-    index: HashMap<T, usize>,
+    index: HashMap<String, usize>,
     /// The distance between the start of the first bar and the start of the next one.
     step: f32,
     /// The width of a bar.
@@ -34,7 +35,7 @@ pub struct ScaleBand<T: Hash + Eq + Copy> {
     r1: f32,
 }
 
-impl<T: Hash + Eq + Copy> ScaleBand<T> {
+impl ScaleBand {
     /// Create a new band scale with default values.
     pub fn new() -> Self {
         let mut scale = Self {
@@ -103,24 +104,25 @@ impl<T: Hash + Eq + Copy> ScaleBand<T> {
         for domain in self.domain.iter() {
             // Check for already existing keys to remove any duplicates in the domain vector.
             if !self.index.contains_key(domain) {
-                self.index.insert(*domain, processed_domains.len());
-                processed_domains.push(*domain);
+                self.index.insert(domain.clone(), processed_domains.len());
+                processed_domains.push(domain.clone());
             }
         }
         // Re-assign domains with any duplicates removed.
+        self.domain.clear();
         self.domain = processed_domains;
     }
 }
 
-impl<T: Hash + Eq + Copy> Scale<T> for ScaleBand<T> {
+impl Scale<String> for ScaleBand {
     /// Set the domain limits for the scale band.
-    fn set_domain(&mut self, range: Vec<T>) {
+    fn set_domain(&mut self, range: Vec<String>) {
         self.domain = range;
         self.rescale();
     }
 
     /// Get the domain limits of the scale.
-    fn domain(&self) -> &Vec<T> {
+    fn domain(&self) -> &Vec<String> {
         &self.domain
     }
 
@@ -141,12 +143,30 @@ impl<T: Hash + Eq + Copy> Scale<T> for ScaleBand<T> {
     }
 
     /// Get the range value for the given domain entry.
-    fn scale(&self, domain: T) -> f32 {
+    fn scale(&self, domain: String) -> f32 {
         self.offsets[*self.index.get(&domain).unwrap()]
     }
 
     /// Get the bandwidth (if present).
     fn bandwidth(&self) -> Option<f32> {
         Some(self.bandwidth)
+    }
+
+    /// Get the max value of the range.
+    fn max_range(&self) -> f32 {
+        self.range.1
+    }
+
+    /// Get the list of ticks that represent the scale on a chart axis.
+    fn get_ticks(&self, orientation: Orientation) -> Vec<AxisTick> {
+        let mut ticks: Vec<AxisTick> = Vec::new();
+
+        // Generate a tick for each category in the domain.
+        for domain in self.domain.iter() {
+            let tick_offset = self.scale(domain.clone()) + self.bandwidth / 2f32;
+            ticks.push(AxisTick::new(tick_offset, 16, domain.clone(), orientation))
+        }
+
+        ticks
     }
 }

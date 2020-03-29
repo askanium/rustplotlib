@@ -2,13 +2,7 @@ use svg::parser::Error;
 use svg::node::Node;
 use svg::node::element::Group;
 use crate::components::DatumRepresentation;
-
-/// Define the orientation of the bar chart.
-#[derive(Debug)]
-pub enum BarOrientation {
-    Horizontal,
-    Vertical,
-}
+use crate::utils::Orientation;
 
 /// Represents a block within a bar.
 /// The first tuple element represents the starting position, the second
@@ -23,17 +17,17 @@ impl BarBlock {
 }
 
 #[derive(Debug)]
-pub struct Bar<T: AsRef<str>> {
+pub struct Bar {
     blocks: Vec<BarBlock>,
-    orientation: BarOrientation,
-    category: T,
+    orientation: Orientation,
+    category: String,
     label: String,
     bar_width: f32,
     offset: f32,
 }
 
-impl<T: AsRef<str>> Bar<T> {
-    pub fn new(blocks: Vec<BarBlock>, orientation: BarOrientation, category: T, label: String, bar_width: f32, offset: f32) -> Self {
+impl Bar {
+    pub fn new(blocks: Vec<BarBlock>, orientation: Orientation, category: String, label: String, bar_width: f32, offset: f32) -> Self {
         Self {
             blocks,
             orientation,
@@ -45,15 +39,15 @@ impl<T: AsRef<str>> Bar<T> {
     }
 }
 
-impl<T: AsRef<str>> DatumRepresentation for Bar<T> {
+impl DatumRepresentation for Bar {
 
     fn to_svg(&self) -> Result<Group, Error> {
         let mut group = Group::new()
             .set("transform", format!("translate({},0)", self.offset));
 
         let (x_attr, y_attr, width_attr, height_attr) = match self.orientation {
-            BarOrientation::Horizontal => ("x", "y", "width", "height"),
-            BarOrientation::Vertical => ("y", "x", "height", "width"),
+            Orientation::Horizontal => ("x", "y", "width", "height"),
+            Orientation::Vertical => ("y", "x", "height", "width"),
         };
 
         for block in self.blocks.iter() {

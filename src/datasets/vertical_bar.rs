@@ -1,26 +1,27 @@
 use std::collections::HashMap;
 use svg::parser::Error;
 use svg::node::Node;
-use crate::components::bar::{Bar, BarBlock, BarOrientation};
+use svg::node::element::Group;
+use crate::components::bar::{Bar, BarBlock};
 use crate::colors::Color;
 use crate::{Scale, BarDatum};
 use crate::scales::ScaleType;
 use crate::components::DatumRepresentation;
 use crate::datasets::Dataset;
-use svg::node::element::Group;
+use crate::utils::Orientation;
 
 /// A Dataset that represents data that should be visualized.
-pub struct VerticalBarDataset<'a, T: AsRef<str>> {
-    entries: Vec<Bar<T>>,
-    categories: Vec<T>,
+pub struct VerticalBarDataset<'a> {
+    entries: Vec<Bar>,
+    categories: Vec<String>,
     keys: Vec<String>,
     colors: Vec<Color>,
     color_map: HashMap<String, String>,
-    x_scale: Option<&'a dyn Scale<T>>,
-    y_scale: Option<&'a dyn Scale<T>>,
+    x_scale: Option<&'a dyn Scale<String>>,
+    y_scale: Option<&'a dyn Scale<f32>>,
 }
 
-impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarDataset<'a, T> {
+impl<'a> VerticalBarDataset<'a> {
     /// Create a new empty instance of the dataset.
     pub fn new() -> Self {
         Self {
@@ -35,12 +36,12 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarDatas
     }
 
     /// Set the scale for the X dimension.
-    pub fn set_x_scale(&mut self, scale: &'a impl Scale<T>) {
+    pub fn set_x_scale(&mut self, scale: &'a impl Scale<String>) {
         self.x_scale = Some(scale);
     }
 
     /// Set the scale for the Y dimension.
-    pub fn set_y_scale(&mut self, scale: &'a impl Scale<T>) {
+    pub fn set_y_scale(&mut self, scale: &'a impl Scale<f32>) {
         self.y_scale = Some(scale);
     }
 
@@ -50,7 +51,7 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarDatas
     }
 
     /// Load and process a dataset of BarDatum points.
-    pub fn load_data(&mut self, data: &Vec<impl BarDatum<T>>) -> Result<(), &str> {
+    pub fn load_data(&mut self, data: &Vec<impl BarDatum>) -> Result<(), &str> {
         match self.x_scale {
             Some(scale) if scale.get_type() == ScaleType::Band => {},
             _ => return Err("The X axis scale should be a Band scale."),
@@ -62,7 +63,7 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarDatas
 
         // HashMap to group all data related to a category. This is needed when there
         // are many data entries under a single category as in a stacked bar chart.
-        let mut categories: HashMap<T, Vec<(&String, &f32)>> = HashMap::new();
+        let mut categories: HashMap<String, Vec<(&String, f32)>> = HashMap::new();
 
         // Organize entries based on the order of the keys first, since displayed data
         // should keep the order defined in the `keys` attribute.
@@ -71,11 +72,13 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarDatas
             self.color_map.insert(key.clone(), self.colors[i].as_hex());
 
             for entry in data.iter() {
-                if entry.get_key() == key {
-                    if !categories.contains_key(entry.get_category()) {
-                        categories.insert(*entry.get_category(), Vec::new());
+                if entry.get_key() == *key {
+                    let entry_category = entry.get_category();
+
+                    if !categories.contains_key(&entry_category) {
+                        categories.insert(entry.get_category(), Vec::new());
                     }
-                    if let Some(category_entries) = categories.get_mut(entry.get_category()) {
+                    if let Some(category_entries) = categories.get_mut(&entry_category) {
                         category_entries.push((key, entry.get_value()));
                     }
                 }
@@ -86,14 +89,14 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarDatas
         let mut bars = Vec::new();
         for (category, key_value_pairs) in categories.iter_mut() {
             let mut bar_blocks = Vec::new();
-            let mut start = 200f32; // TODO set this to the height of the chart since SVG coordinate system is inversed.
+            let mut start = 530f32; // TODO set this to the height of the chart since SVG coordinate system is inversed.
 
             for (key, value) in key_value_pairs.iter() {
-                start -= **value;
-                bar_blocks.push(BarBlock::new(start, **value, self.color_map.get(*key).unwrap().clone()));
+                start -= *value;
+                bar_blocks.push(BarBlock::new(start, *value, self.color_map.get(*key).unwrap().clone()));
             }
 
-            let bar = Bar::new(bar_blocks, BarOrientation::Vertical, *category, start.to_string(), self.x_scale.unwrap().bandwidth().unwrap(), self.x_scale.unwrap().scale(*category));
+            let bar = Bar::new(bar_blocks, Orientation::Vertical, category.to_string(), start.to_string(), self.x_scale.unwrap().bandwidth().unwrap(), self.x_scale.unwrap().scale(category.to_string()));
             bars.push(bar);
         }
 
@@ -105,7 +108,7 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarDatas
     }
 
     /// A shortcut method that will take care of creating the scales based on the data provided.
-    pub fn from_data(data: &Vec<impl BarDatum<T>>) -> Self {
+    pub fn from_data(data: &Vec<impl BarDatum>) -> Self {
         // TODO implement this method properly.
         Self {
             entries: Vec::new(),
@@ -131,13 +134,13 @@ impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> VerticalBarDatas
     }
 
     /// Add a [Bar] entry to the dataset entries list.
-    fn add_bar(&mut self, bar: Bar<T>) {
+    fn add_bar(&mut self, bar: Bar) {
         self.entries.push(bar);
     }
 
 }
 
-impl<'a, T: std::cmp::Eq + std::hash::Hash + Copy + AsRef<str>> Dataset<'a> for VerticalBarDataset<'a, T> {
+impl<'a> Dataset<'a> for VerticalBarDataset<'a> {
     fn to_svg(&self) -> Result<Group, Error> {
         Ok(self.to_svg().unwrap())
     }

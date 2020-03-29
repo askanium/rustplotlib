@@ -29,6 +29,7 @@ pub mod utils;
 mod datasets;
 pub mod components;
 mod colors;
+mod axis;
 
 pub use crate::chart::Chart;
 pub use crate::view::View;
@@ -37,6 +38,7 @@ pub use crate::scales::linear::ScaleLinear;
 pub use crate::scales::Scale;
 pub use crate::datasets::vertical_bar::VerticalBarDataset;
 pub use crate::datasets::datum::BarDatum;
+pub use crate::axis::{XAxis, XAxisCategorical};
 
 #[cfg(test)]
 mod tests {
