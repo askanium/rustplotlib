@@ -8,11 +8,11 @@ use crate::utils::Orientation;
 /// The first tuple element represents the starting position, the second
 /// one is the size of that block and the third one is the color.
 #[derive(Debug)]
-pub struct BarBlock(f32, f32, String);
+pub struct BarBlock(f32, f32, f32, String);
 
 impl BarBlock {
-    pub fn new(start: f32, size: f32, color: String) -> Self {
-        Self(start, size, color)
+    pub fn new(start: f32, end: f32, size: f32, color: String) -> Self {
+        Self(start, end, size, color)
     }
 }
 
@@ -54,9 +54,9 @@ impl DatumRepresentation for Bar {
             let block = svg::node::element::Rectangle::new()
                 .set(x_attr, block.0)
                 .set(y_attr, 0)
-                .set(width_attr, block.1)
+                .set(width_attr, block.2)
                 .set(height_attr, self.bar_width)
-                .set("fill", block.2.as_ref());
+                .set("fill", block.3.as_ref());
 
             group.append(block);
         }

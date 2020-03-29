@@ -25,6 +25,21 @@ impl ScaleLinear {
         scale
     }
 
+    /// Takes a value x in [a, b] and returns the corresponding value in [0, 1].
+    fn normalize(&self, a: f32, b: f32, x: f32) -> f32 {
+        let b = b - a;
+        match b {
+            // If a == b then return 0.5
+            0f32 => 0.5,
+            _ => (x - a) / b
+        }
+    }
+
+    /// Takes a value t in [0, 1] and returns the corresponding range in [a, b].
+    fn interpolate(&self, a: f32, b: f32, t: f32) -> f32 {
+        (b - a) * t + a
+    }
+
     fn rescale(&mut self) {
     }
 }
@@ -33,7 +48,6 @@ impl Scale<f32> for ScaleLinear {
     /// Set the domain limits for the scale band.
     fn set_domain(&mut self, range: Vec<f32>) {
         self.domain = range;
-        self.rescale();
     }
 
     /// Get the domain limits of the scale.
@@ -43,8 +57,11 @@ impl Scale<f32> for ScaleLinear {
 
     /// Set the range limits for the scale band.
     fn set_range(&mut self, range: Range) {
-        self.range = range;
-        self.rescale();
+        if range.0 > range.1 {
+            self.range = Range(range.1, range.0);
+        } else {
+            self.range = range;
+        }
     }
 
     /// Get the range limits of the scale.
@@ -59,7 +76,13 @@ impl Scale<f32> for ScaleLinear {
 
     /// Get the range value for the given domain entry.
     fn scale(&self, domain: f32) -> f32 {
-        1f32
+        let a = self.domain[0];
+        let b = self.domain[1];
+        let normalized = self.normalize(a, b, domain);
+        let Range(a, b) = self.range;
+        let scaled = self.interpolate(a, b, normalized);
+
+        scaled
     }
 
     /// Get the bandwidth (if present).

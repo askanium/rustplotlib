@@ -92,8 +92,9 @@ impl<'a> VerticalBarDataset<'a> {
             let mut start = 530f32; // TODO set this to the height of the chart since SVG coordinate system is inversed.
 
             for (key, value) in key_value_pairs.iter() {
-                start -= *value;
-                bar_blocks.push(BarBlock::new(start, *value, self.color_map.get(*key).unwrap().clone()));
+                let scaled_value = self.y_scale.unwrap().scale(*value);
+                bar_blocks.push(BarBlock::new(start - scaled_value, start, scaled_value, self.color_map.get(*key).unwrap().clone()));
+                start -= scaled_value;
             }
 
             let bar = Bar::new(bar_blocks, Orientation::Vertical, category.to_string(), start.to_string(), self.x_scale.unwrap().bandwidth().unwrap(), self.x_scale.unwrap().scale(category.to_string()));
