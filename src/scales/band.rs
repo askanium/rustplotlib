@@ -54,9 +54,42 @@ impl ScaleBand {
         scale
     }
 
-    pub fn set_inner_padding(&mut self, padding: f32) {
+    /// Set the inner padding ratio.
+    pub fn set_inner_padding(mut self, padding: f32) -> Self {
         self.padding_inner = padding;
         self.rescale();
+        self
+    }
+
+    /// Set the outer padding ratio.
+    pub fn set_outer_padding(mut self, padding: f32) -> Self {
+        self.padding_outer = padding;
+        self.rescale();
+        self
+    }
+
+    /// Set the domain limits for the scale band.
+    pub fn set_domain(mut self, range: Vec<String>) -> Self {
+        self.domain = range;
+        self.rescale();
+        self
+    }
+
+    /// Get the domain limits of the scale.
+    pub fn domain(&self) -> &Vec<String> {
+        &self.domain
+    }
+
+    /// Set the range limits for the scale band.
+    pub fn set_range(mut self, range: Range) -> Self {
+        self.range = range;
+        self.rescale();
+        self
+    }
+
+    /// Get the range limits of the scale.
+    pub fn range(&self) -> &Range {
+        &self.range
     }
 
     fn rescale(&mut self) {
@@ -115,28 +148,6 @@ impl ScaleBand {
 }
 
 impl Scale<String> for ScaleBand {
-    /// Set the domain limits for the scale band.
-    fn set_domain(&mut self, range: Vec<String>) {
-        self.domain = range;
-        self.rescale();
-    }
-
-    /// Get the domain limits of the scale.
-    fn domain(&self) -> &Vec<String> {
-        &self.domain
-    }
-
-    /// Set the range limits for the scale band.
-    fn set_range(&mut self, range: Range) {
-        self.range = range;
-        self.rescale();
-    }
-
-    /// Get the range limits of the scale.
-    fn range(&self) -> &Range {
-        &self.range
-    }
-
     /// Get the type of the scale.
     fn get_type(&self) -> ScaleType {
         ScaleType::Band

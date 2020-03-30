@@ -28,6 +28,32 @@ impl ScaleLinear {
         scale
     }
 
+    /// Set the domain limits for the scale band.
+    pub fn set_domain(mut self, range: Vec<f32>) -> Self {
+        self.domain = range;
+        self
+    }
+
+    /// Get the domain limits of the scale.
+    pub fn domain(&self) -> &Vec<f32> {
+        &self.domain
+    }
+
+    /// Set the range limits for the scale band.
+    pub fn set_range(mut self, range: Range) -> Self {
+        if range.0 > range.1 {
+            self.range = Range(range.1, range.0);
+        } else {
+            self.range = range;
+        }
+        self
+    }
+
+    /// Get the range limits of the scale.
+    pub fn range(&self) -> &Range {
+        &self.range
+    }
+
     /// Takes a value x in [a, b] and returns the corresponding value in [0, 1].
     fn normalize(&self, a: f32, b: f32, x: f32) -> f32 {
         let b = b - a;
@@ -71,30 +97,6 @@ impl ScaleLinear {
 }
 
 impl Scale<f32> for ScaleLinear {
-    /// Set the domain limits for the scale band.
-    fn set_domain(&mut self, range: Vec<f32>) {
-        self.domain = range;
-    }
-
-    /// Get the domain limits of the scale.
-    fn domain(&self) -> &Vec<f32> {
-        &self.domain
-    }
-
-    /// Set the range limits for the scale band.
-    fn set_range(&mut self, range: Range) {
-        if range.0 > range.1 {
-            self.range = Range(range.1, range.0);
-        } else {
-            self.range = range;
-        }
-    }
-
-    /// Get the range limits of the scale.
-    fn range(&self) -> &Range {
-        &self.range
-    }
-
     /// Get the type of the scale.
     fn get_type(&self) -> ScaleType {
         ScaleType::Linear
