@@ -13,6 +13,7 @@ use svg::node::element::Group;
 use svg::Node;
 use crate::view::View;
 use crate::{XAxis, YAxis};
+use crate::datasets::Dataset;
 
 /// The BarChart struct definition.
 pub struct Chart<'a> {
@@ -24,11 +25,12 @@ pub struct Chart<'a> {
     height: usize,
     x_axis_bottom: Option<&'a dyn XAxis>,
     y_axis_left: Option<&'a dyn YAxis>,
-    view: &'a View<'a>,
+    view: View<'a>,
 }
 
 impl<'a> Chart<'a> {
-    pub fn with_view(view: &'a View<'a>) -> Self {
+    /// Create a new instance of a chart with default sizes.
+    pub fn new() -> Self {
         Self {
             margin_top: 20,
             margin_bottom: 50,
@@ -38,16 +40,35 @@ impl<'a> Chart<'a> {
             height: 600,
             x_axis_bottom: None,
             y_axis_left: None,
-            view,
+            view: View::new(),
         }
     }
 
-    pub fn add_bottom_axis(&mut self, axis: &'a dyn XAxis) {
-        self.x_axis_bottom = Some(axis);
+    /// Set the margins of the chart to provided values.
+    pub fn set_margins(mut self, top: usize, right: usize, bottom: usize, left: usize) -> Self {
+        self.margin_top = top;
+        self.margin_right = right;
+        self.margin_bottom = bottom;
+        self.margin_left = left;
+        self
     }
 
-    pub fn add_left_axis(&mut self, axis: &'a dyn YAxis) {
+    /// Add the dataset to the chart's view.
+    pub fn add_dataset(mut self, dataset: &'a dyn Dataset<'a>) -> Self {
+        self.view.add_dataset(dataset);
+        self
+    }
+
+    /// Add a bottom axis to the chart.
+    pub fn add_bottom_axis(mut self, axis: &'a dyn XAxis) -> Self {
+        self.x_axis_bottom = Some(axis);
+        self
+    }
+
+    /// Add a left axis to the chart.
+    pub fn add_left_axis(mut self, axis: &'a dyn YAxis) -> Self {
         self.y_axis_left = Some(axis);
+        self
     }
 
     fn to_svg(&self) -> Result<Group, Error> {
@@ -74,7 +95,7 @@ impl<'a> Chart<'a> {
     }
 
     /// Save the chart to a file
-    pub fn save(&self, path: &dyn AsRef<Path>) -> Result<(), String> {
+    pub fn save(self, path: &dyn AsRef<Path>) -> Result<(), String> {
         match path.as_ref().extension().and_then(OsStr::to_str) {
             Some("svg") => {
                 match self.to_svg() {
