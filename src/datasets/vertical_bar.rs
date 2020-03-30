@@ -27,7 +27,7 @@ impl<'a> VerticalBarDataset<'a> {
         Self {
             entries: Vec::new(),
             categories: Vec::new(),
-            keys: vec![String::new()],
+            keys: Vec::new(),
             colors: Color::color_scheme_10(),
             color_map: HashMap::new(),
             x_scale: None,
@@ -59,6 +59,11 @@ impl<'a> VerticalBarDataset<'a> {
         match self.y_scale {
             Some(scale) if scale.get_type() == ScaleType::Linear => {},
             _ => return Err("The Y axis scale should be a Linear scale."),
+        }
+
+        // If no keys were explicitly provided, extract the keys from the data.
+        if self.keys.len() == 0 {
+            self.keys = Self::extract_keys(&data);
         }
 
         // HashMap to group all data related to a category. This is needed when there
@@ -120,6 +125,20 @@ impl<'a> VerticalBarDataset<'a> {
             x_scale: None,
             y_scale: None,
         }
+    }
+
+    fn extract_keys(data: &Vec<impl BarDatum>) -> Vec<String> {
+        let mut keys = Vec::new();
+        let mut map = HashMap::new();
+
+        for datum in data.iter() {
+            match map.insert(datum.get_key(), 0) {
+                Some(_) => {},
+                None => keys.push(datum.get_key()),
+            }
+        }
+
+        keys
     }
 
     /// Generate the SVG representation of the dataset.
