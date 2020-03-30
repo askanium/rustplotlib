@@ -53,23 +53,43 @@ impl AxisTick {
 
     /// Render the axis tick to svg.
     pub fn to_svg(&self) -> Result<Group, String> {
+        let offsets: (f32, f32);
+        let tick_line_p2: (isize, isize);
+        let tick_label_offset: (isize, isize);
+        let tick_label_text_anchor: &str;
+
+        match self.axis_orientation {
+            Orientation::Vertical => {
+                offsets = (0_f32, self.tick_offset);
+                tick_line_p2 = (-6, 0);
+                tick_label_offset = (-(self.label_offset as isize), 0);
+                tick_label_text_anchor = "end";
+            },
+            Orientation::Horizontal => {
+                offsets = (self.tick_offset, 0_f32);
+                tick_line_p2 = (0, 6);
+                tick_label_offset = (0, self.label_offset as isize);
+                tick_label_text_anchor = "middle";
+            },
+        };
+
         let mut group = Group::new()
             .set("class", "tick")
-            .set("transform", format!("translate({},{})", self.tick_offset, 0));
+            .set("transform", format!("translate({},{})", offsets.0, offsets.1));
 
         let tick_line = Line::new()
             .set("x1", 0)
             .set("y1", 0)
-            .set("x2", 0)
-            .set("y2", 6)
+            .set("x2", tick_line_p2.0)
+            .set("y2", tick_line_p2.1)
             .set("stroke", "#bbbbbb")
             .set("stroke-width", "1px");
 
         let mut tick_label = Text::new()
-            .set("x", 0)
-            .set("y", self.label_offset)
+            .set("x", tick_label_offset.0)
+            .set("y", tick_label_offset.1)
             .set("dy", ".35em")
-            .set("text-anchor", "middle")
+            .set("text-anchor", tick_label_text_anchor)
             .set("font-size", "14px")
             .set("font-family", "sans-serif")
             .set("fill", "#777")

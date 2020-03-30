@@ -38,5 +38,5 @@ pub trait Scale<T> {
     fn max_range(&self) -> f32;
 
     /// Get the list of ticks that represent the scale on a chart axis.
-    fn get_ticks(&self, orientation: Orientation) -> Vec<AxisTick>;
+    fn get_ticks(&self) -> Vec<T>;
 }

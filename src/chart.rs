@@ -12,7 +12,7 @@ use svg::parser::Error;
 use svg::node::element::Group;
 use svg::Node;
 use crate::view::View;
-use crate::XAxis;
+use crate::{XAxis, YAxis};
 
 /// The BarChart struct definition.
 pub struct Chart<'a> {
@@ -22,8 +22,9 @@ pub struct Chart<'a> {
     margin_left: usize,
     width: usize,
     height: usize,
+    x_axis_bottom: Option<&'a dyn XAxis>,
+    y_axis_left: Option<&'a dyn YAxis>,
     view: &'a View<'a>,
-    x_axis_bottom: Option<&'a dyn XAxis>
 }
 
 impl<'a> Chart<'a> {
@@ -35,13 +36,18 @@ impl<'a> Chart<'a> {
             margin_left: 60,
             width: 800,
             height: 600,
-            view,
             x_axis_bottom: None,
+            y_axis_left: None,
+            view,
         }
     }
 
     pub fn add_bottom_axis(&mut self, axis: &'a dyn XAxis) {
         self.x_axis_bottom = Some(axis);
+    }
+
+    pub fn add_left_axis(&mut self, axis: &'a dyn YAxis) {
+        self.y_axis_left = Some(axis);
     }
 
     fn to_svg(&self) -> Result<Group, Error> {
@@ -55,6 +61,12 @@ impl<'a> Chart<'a> {
         if let Some(mut axis) = self.x_axis_bottom {
             let mut axis_group = axis.to_svg().unwrap();
             axis_group.assign("transform", format!("translate({},{})", self.margin_left, self.height - self.margin_bottom));
+            group.append(axis_group);
+        };
+
+        if let Some(mut axis) = self.y_axis_left {
+            let mut axis_group = axis.to_svg().unwrap();
+            axis_group.assign("transform", format!("translate({},{})", self.margin_left, self.margin_top));
             group.append(axis_group);
         };
 

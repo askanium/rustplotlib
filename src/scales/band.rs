@@ -158,15 +158,7 @@ impl Scale<String> for ScaleBand {
     }
 
     /// Get the list of ticks that represent the scale on a chart axis.
-    fn get_ticks(&self, orientation: Orientation) -> Vec<AxisTick> {
-        let mut ticks: Vec<AxisTick> = Vec::new();
-
-        // Generate a tick for each category in the domain.
-        for domain in self.domain.iter() {
-            let tick_offset = self.scale(domain.clone()) + self.bandwidth / 2f32;
-            ticks.push(AxisTick::new(tick_offset, 16, domain.clone(), orientation))
-        }
-
-        ticks
+    fn get_ticks(&self) -> Vec<String> {
+        self.domain.clone()
     }
 }

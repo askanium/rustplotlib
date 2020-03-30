@@ -1,9 +1,9 @@
-use crate::utils::{Range, Orientation};
 use std::cmp::max;
-use crate::scales::{Scale, ScaleType};
 use std::fmt;
 use std::hash::Hash;
 use std::collections::HashMap;
+use crate::utils::{Range, Orientation};
+use crate::scales::{Scale, ScaleType};
 use crate::components::axis::AxisTick;
 
 /// The scale to represent categorical data.
@@ -13,6 +13,8 @@ pub struct ScaleLinear {
     domain: Vec<f32>,
     /// The range limits of the drawable area on the chart.
     range: Range,
+    /// The amount of ticks to display.
+    tick_count: usize,
 }
 
 impl ScaleLinear {
@@ -21,6 +23,7 @@ impl ScaleLinear {
         let mut scale = Self {
             domain: Vec::new(),
             range: Range::default(),
+            tick_count: 10,
         };
         scale
     }
@@ -40,7 +43,30 @@ impl ScaleLinear {
         (b - a) * t + a
     }
 
-    fn rescale(&mut self) {
+    /// Compute the distance between the ticks.
+    fn tick_step(&self, start: f32, stop: f32) -> f32 {
+        let e10 = 50_f32.sqrt();
+        let e5 = 10_f32.sqrt();
+        let e2 = 2_f32.sqrt();
+        let step = (stop - start) / max(0, self.tick_count) as f32;
+        let power = (step.ln() / 10_f32.ln()).trunc() as i32;
+        let error = step / 10_f32.powi(power);
+        let dynamic = if error >= e10 {
+            10
+        } else if error >= e5 {
+            5
+        } else if error >= e2 {
+            2
+        } else {
+            1
+        };
+
+        let step = match power.cmp(&0) {
+            Less => -10_f32.powi(-power) / dynamic as f32,
+            _ => dynamic as f32 * 10_f32.powi(power),
+        };
+
+        step
     }
 }
 
@@ -96,8 +122,34 @@ impl Scale<f32> for ScaleLinear {
     }
 
     /// Get the list of ticks that represent the scale on a chart axis.
-    fn get_ticks(&self, orientation: Orientation) -> Vec<AxisTick> {
-        Vec::new()
-    }
+    fn get_ticks(&self) -> Vec<f32> {
+        let mut ticks = Vec::new();
 
+        if self.domain[0] == self.domain[1] && self.tick_count > 0 {
+            ticks.push(self.domain[0]);
+            return ticks;
+        }
+
+        let step = self.tick_step(self.domain[0], self.domain[1]);
+        let mut i = 0;
+        if step > 0_f32 {
+            let start = (self.domain[0] / step).ceil();
+            let stop = (self.domain[1] / step).floor();
+            let nr_of_ticks = (stop - start + 1_f32).ceil() as i32;
+            while i < nr_of_ticks {
+                ticks.push((start + i as f32) * step);
+                i += 1;
+            }
+        } else {
+            let start = (self.domain[0] * step).floor();
+            let stop = (self.domain[1] * step).ceil();
+            let nr_of_ticks = (start - stop + 1_f32).ceil() as i32;
+            while i < nr_of_ticks {
+                ticks.push((start - i as f32) / step);
+                i += 1;
+            }
+        }
+
+        ticks
+    }
 }
