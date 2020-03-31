@@ -116,16 +116,10 @@ impl<'a> VerticalBarDataset<'a> {
 
     /// A shortcut method that will take care of creating the scales based on the data provided.
     pub fn from_data(data: &Vec<impl BarDatum>) -> Self {
-        // TODO implement this method properly.
-        Self {
-            entries: Vec::new(),
-            categories: Vec::new(),
-            keys: Vec::new(),
-            colors: Vec::new(),
-            color_map: HashMap::new(),
-            x_scale: None,
-            y_scale: None,
-        }
+        let mut dataset = Self::new();
+        dataset.keys = Self::extract_keys(&data);
+
+        dataset
     }
 
     fn extract_keys(data: &Vec<impl BarDatum>) -> Vec<String> {

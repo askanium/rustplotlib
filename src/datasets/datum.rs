@@ -1,6 +1,16 @@
+/// A trait that defines interaction with a data point used in a bar chart.
+/// This provides greater flexibility in using different data sources as one
+/// can simply implement this trait and be able to use that data in a bar chart.
 pub trait BarDatum {
+    /// Return the category of the datum.
     fn get_category(&self) -> String;
+
+    /// Return the value of the datum.
     fn get_value(&self) -> f32;
+
+    /// Return the key of the datum. This is optional in a simple bar chart
+    /// (just return an empty string), but is required in a stacked bar chart
+    /// as the stacked entries are differentiated by the key.
     fn get_key(&self) -> String;
 }
 
