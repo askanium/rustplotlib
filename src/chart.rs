@@ -136,7 +136,9 @@ impl<'a> Chart<'a> {
     }
 
     /// Save the chart to a file
-    pub fn save(self, path: &dyn AsRef<Path>) -> Result<(), String> {
+    pub fn save<P>(self, path: P) -> Result<(), String> where
+        P: AsRef<Path>
+    {
         match path.as_ref().extension().and_then(OsStr::to_str) {
             Some("svg") => {
                 match self.to_svg() {
