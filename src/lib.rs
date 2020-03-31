@@ -27,7 +27,7 @@ mod view;
 mod scales;
 pub mod utils;
 mod datasets;
-pub mod components;
+mod components;
 mod colors;
 mod axis;
 
