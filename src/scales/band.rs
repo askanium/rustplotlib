@@ -154,8 +154,8 @@ impl Scale<String> for ScaleBand {
     }
 
     /// Get the range value for the given domain entry.
-    fn scale(&self, domain: String) -> f32 {
-        self.offsets[*self.index.get(&domain).unwrap()]
+    fn scale(&self, domain: &String) -> f32 {
+        self.offsets[*self.index.get(domain).unwrap()]
     }
 
     /// Get the bandwidth (if present).

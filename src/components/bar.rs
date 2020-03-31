@@ -56,6 +56,7 @@ impl DatumRepresentation for Bar {
                 .set(y_attr, 0)
                 .set(width_attr, block.2)
                 .set(height_attr, self.bar_width)
+                .set("shape-rendering", "crispEdges")
                 .set("fill", block.3.as_ref());
 
             group.append(block);

@@ -1,36 +1,69 @@
+use std::string::ToString;
 use svg::node::element::Group;
 use svg::parser::Error;
 use svg::Node;
 use crate::utils::{Range, Orientation};
-use crate::Scale;
+use crate::{Scale, Chart};
 use crate::components::axis::{AxisLine, AxisTick};
+use crate::scales::ScaleType;
 
-/// A categorical axis struct that represents a specific scale on the X dimension.
-pub struct XAxisCategorical<'a> {
-    scale: &'a dyn Scale<String>,
-    ticks: Vec<AxisTick>,
-    axis_line: AxisLine,
+/// Enum of possible axis positions on the chart.
+#[derive(Copy, Clone)]
+pub enum AxisPosition {
+    Top,
+    Right,
+    Bottom,
+    Left,
 }
 
-/// A categorical axis struct that represents a specific scale on the X dimension.
-pub struct YAxisLinear<'a> {
-    scale: &'a dyn Scale<f32>,
+/// An axis struct that represents an axis along a dimension of the chart.
+pub struct Axis {
     ticks: Vec<AxisTick>,
     axis_line: AxisLine,
+    position: AxisPosition,
 }
 
-impl<'a> XAxisCategorical<'a> {
-    pub fn new(scale: &'a dyn Scale<String>) -> Self {
+impl Axis {
+    /// Create a new instance of an axis for a chart based on the provided scale and position.
+    fn new<'a, T: ToString>(scale: &'a dyn Scale<T>, position: AxisPosition, chart: &Chart<'a>) -> Self {
         Self {
-            scale,
-            ticks: Self::generate_ticks(scale),
-            axis_line: AxisLine::new(0f32, 0f32, scale.max_range(), 0f32)
+            ticks: Self::generate_ticks(scale, position, chart),
+            position,
+            axis_line: Self::get_axis_line(position, chart),
         }
     }
 
+    /// Create a new axis at the top of the chart.
+    pub fn new_top_axis<'a, T: ToString>(scale: &'a dyn Scale<T>, chart: &Chart<'a>) -> Self {
+        Self::new(scale, AxisPosition::Top, chart)
+    }
+
+    /// Create a new axis to the right of the chart.
+    pub fn new_right_axis<'a, T: ToString>(scale: &'a dyn Scale<T>, chart: &Chart<'a>) -> Self {
+        Self::new(scale, AxisPosition::Right, chart)
+    }
+
+    /// Create a new axis at the bottom of the chart.
+    pub fn new_bottom_axis<'a, T: ToString>(scale: &'a dyn Scale<T>, chart: &Chart<'a>) -> Self {
+        Self::new(scale, AxisPosition::Bottom, chart)
+    }
+
+    /// Create a new axis to the left of the chart.
+    pub fn new_left_axis<'a, T: ToString>(scale: &'a dyn Scale<T>, chart: &Chart<'a>) -> Self {
+        Self::new(scale, AxisPosition::Left, chart)
+    }
+
+    /// Generate svg for the axis.
     pub fn to_svg(&self) -> Result<Group, Error> {
+        let axis_class = match self.position {
+            AxisPosition::Top => "x-axis",
+            AxisPosition::Bottom => "x-axis",
+            AxisPosition::Left => "y-axis",
+            AxisPosition::Right => "y-axis",
+        };
+
         let mut group = Group::new()
-            .set("class", "x-axis")
+            .set("class", axis_class)
             .add(self.axis_line.to_svg().unwrap());
 
         for tick in self.ticks.iter() {
@@ -40,67 +73,41 @@ impl<'a> XAxisCategorical<'a> {
         Ok(group)
     }
 
-    fn generate_ticks(scale: &'a dyn Scale<String>) -> Vec<AxisTick> {
+    /// Generate ticks for the axis based on the scale and position.
+    fn generate_ticks<'a, T: ToString>(scale: &'a dyn Scale<T>, position: AxisPosition, chart: &Chart<'a>) -> Vec<AxisTick> {
+        let orientation = match position {
+            AxisPosition::Top => Orientation::Horizontal,
+            AxisPosition::Bottom => Orientation::Horizontal,
+            AxisPosition::Left => Orientation::Vertical,
+            AxisPosition::Right => Orientation::Vertical,
+        };
         let mut ticks = Vec::new();
 
         for tick in scale.get_ticks() {
-            let axis_tick = AxisTick::new(scale.scale(tick.to_string()) + scale.bandwidth().unwrap() / 2_f32, 16, tick, Orientation::Horizontal);
+            let tick_offset = match position {
+                AxisPosition::Bottom if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
+                AxisPosition::Bottom => scale.scale(&tick),
+                AxisPosition::Left if scale.get_type() == ScaleType::Band => chart.get_view_height() as f32 - scale.scale(&tick) - scale.bandwidth().unwrap() / 2_f32,
+                AxisPosition::Left => chart.get_view_height() as f32 - scale.scale(&tick),
+                AxisPosition::Top if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
+                AxisPosition::Top => scale.scale(&tick),
+                AxisPosition::Right if scale.get_type() == ScaleType::Band => chart.get_view_height() as f32 - scale.scale(&tick) - scale.bandwidth().unwrap() / 2_f32,
+                AxisPosition::Right => chart.get_view_height() as f32 - scale.scale(&tick),
+            };
+            let axis_tick = AxisTick::new(tick_offset, 16, tick.to_string(), orientation);
             ticks.push(axis_tick);
         }
 
         ticks
     }
-}
 
-impl<'a> YAxisLinear<'a> {
-    pub fn new(scale: &'a dyn Scale<f32>) -> Self {
-        Self {
-            scale,
-            ticks: Self::generate_ticks(scale),
-            axis_line: AxisLine::new(0_f32, 0_f32, 0_f32, scale.max_range())
+    /// Generate the line that represents the axis.
+    fn get_axis_line<'a>(position: AxisPosition, chart: &Chart<'a>) -> AxisLine {
+        match position {
+            AxisPosition::Top => AxisLine::new(0_f32, 0_f32, chart.get_view_width() as f32, 0_f32),
+            AxisPosition::Right => AxisLine::new(0_f32, 0_f32, 0_f32, chart.get_view_height() as f32),
+            AxisPosition::Bottom => AxisLine::new(0_f32, 0_f32, chart.get_view_width() as f32, 0_f32),
+            AxisPosition::Left => AxisLine::new(0_f32, 0_f32, 0_f32, chart.get_view_height() as f32),
         }
-    }
-
-    pub fn to_svg(&self) -> Result<Group, Error> {
-        let mut group = Group::new()
-            .set("class", "y-axis")
-            .add(self.axis_line.to_svg().unwrap());
-
-        for tick in self.ticks.iter() {
-            group.append(tick.to_svg().unwrap());
-        }
-
-        Ok(group)
-    }
-
-    fn generate_ticks(scale: &'a dyn Scale<f32>) -> Vec<AxisTick> {
-        let mut ticks = Vec::new();
-
-        for tick in scale.get_ticks() {
-            let axis_tick = AxisTick::new(scale.max_range() - scale.scale(tick), 16, tick.to_string(), Orientation::Vertical);
-            ticks.push(axis_tick);
-        }
-
-        ticks
-    }
-}
-
-pub trait XAxis {
-    fn to_svg(&self) -> Result<Group, Error>;
-}
-
-impl<'a> XAxis for XAxisCategorical<'a> {
-    fn to_svg(&self) -> Result<Group, Error> {
-        self.to_svg()
-    }
-}
-
-pub trait YAxis {
-    fn to_svg(&self) -> Result<Group, Error>;
-}
-
-impl<'a> YAxis for YAxisLinear<'a> {
-    fn to_svg(&self) -> Result<Group, Error> {
-        self.to_svg()
     }
 }

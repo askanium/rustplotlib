@@ -103,10 +103,10 @@ impl Scale<f32> for ScaleLinear {
     }
 
     /// Get the range value for the given domain entry.
-    fn scale(&self, domain: f32) -> f32 {
+    fn scale(&self, domain: &f32) -> f32 {
         let a = self.domain[0];
         let b = self.domain[1];
-        let normalized = self.normalize(a, b, domain);
+        let normalized = self.normalize(a, b, *domain);
         let Range(a, b) = self.range;
         let scaled = self.interpolate(a, b, normalized);
 

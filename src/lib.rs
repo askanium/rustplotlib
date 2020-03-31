@@ -38,7 +38,7 @@ pub use crate::scales::linear::ScaleLinear;
 pub use crate::scales::Scale;
 pub use crate::datasets::vertical_bar::VerticalBarDataset;
 pub use crate::datasets::datum::BarDatum;
-pub use crate::axis::{XAxis, XAxisCategorical, YAxis, YAxisLinear};
+pub use crate::axis::Axis;
 
 #[cfg(test)]
 mod tests {

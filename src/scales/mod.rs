@@ -17,7 +17,7 @@ pub trait Scale<T> {
     fn get_type(&self) -> ScaleType;
 
     /// Get the range value for the given domain entry.
-    fn scale(&self, domain: T) -> f32;
+    fn scale(&self, domain: &T) -> f32;
 
     /// Get the bandwidth (if present).
     fn bandwidth(&self) -> Option<f32>;

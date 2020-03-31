@@ -36,29 +36,32 @@ impl<'a> VerticalBarDataset<'a> {
     }
 
     /// Set the scale for the X dimension.
-    pub fn set_x_scale(&mut self, scale: &'a impl Scale<String>) {
+    pub fn set_x_scale(mut self, scale: &'a impl Scale<String>) -> Self {
         self.x_scale = Some(scale);
+        self
     }
 
     /// Set the scale for the Y dimension.
-    pub fn set_y_scale(&mut self, scale: &'a impl Scale<f32>) {
+    pub fn set_y_scale(mut self, scale: &'a impl Scale<f32>) -> Self {
         self.y_scale = Some(scale);
+        self
     }
 
     /// Set the keys in case of a stacked bar chart.
-    pub fn set_keys(&mut self, keys: Vec<String>) {
+    pub fn set_keys(mut self, keys: Vec<String>) -> Self {
         self.keys = keys;
+        self
     }
 
     /// Load and process a dataset of BarDatum points.
-    pub fn load_data(&mut self, data: &Vec<impl BarDatum>) -> Result<(), &str> {
+    pub fn load_data(mut self, data: &Vec<impl BarDatum>) -> Result<Self, String> {
         match self.x_scale {
             Some(scale) if scale.get_type() == ScaleType::Band => {},
-            _ => return Err("The X axis scale should be a Band scale."),
+            _ => return Err("The X axis scale should be a Band scale.".to_string()),
         }
         match self.y_scale {
             Some(scale) if scale.get_type() == ScaleType::Linear => {},
-            _ => return Err("The Y axis scale should be a Linear scale."),
+            _ => return Err("The Y axis scale should be a Linear scale.".to_string()),
         }
 
         // If no keys were explicitly provided, extract the keys from the data.
@@ -97,12 +100,12 @@ impl<'a> VerticalBarDataset<'a> {
             let mut start = 530f32; // TODO set this to the height of the chart since SVG coordinate system is inversed.
 
             for (key, value) in key_value_pairs.iter() {
-                let scaled_value = self.y_scale.unwrap().scale(*value);
+                let scaled_value = self.y_scale.unwrap().scale(value);
                 bar_blocks.push(BarBlock::new(start - scaled_value, start, scaled_value, self.color_map.get(*key).unwrap().clone()));
                 start -= scaled_value;
             }
 
-            let bar = Bar::new(bar_blocks, Orientation::Vertical, category.to_string(), start.to_string(), self.x_scale.unwrap().bandwidth().unwrap(), self.x_scale.unwrap().scale(category.to_string()));
+            let bar = Bar::new(bar_blocks, Orientation::Vertical, category.to_string(), start.to_string(), self.x_scale.unwrap().bandwidth().unwrap(), self.x_scale.unwrap().scale(category));
             bars.push(bar);
         }
 
@@ -110,7 +113,7 @@ impl<'a> VerticalBarDataset<'a> {
             self.add_bar(bar);
         }
 
-        Ok(())
+        Ok(self)
     }
 
     /// A shortcut method that will take care of creating the scales based on the data provided.

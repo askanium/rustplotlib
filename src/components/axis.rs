@@ -25,6 +25,7 @@ impl AxisLine {
             .set("y1", self.y1)
             .set("x2", self.x2)
             .set("y2", self.y2)
+            .set("shape-rendering", "crispEdges")
             .set("stroke-width", 1)
             .set("stroke", "#bbbbbb");
 
@@ -82,6 +83,7 @@ impl AxisTick {
             .set("y1", 0)
             .set("x2", tick_line_p2.0)
             .set("y2", tick_line_p2.1)
+            .set("shape-rendering", "crispEdges")
             .set("stroke", "#bbbbbb")
             .set("stroke-width", "1px");
 
