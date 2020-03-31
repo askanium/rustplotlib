@@ -87,7 +87,7 @@ impl AxisTick {
             .set("stroke", "#bbbbbb")
             .set("stroke-width", "1px");
 
-        let mut tick_label = Text::new()
+        let tick_label = Text::new()
             .set("x", tick_label_offset.0)
             .set("y", tick_label_offset.1)
             .set("dy", ".35em")

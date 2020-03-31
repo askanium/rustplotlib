@@ -15,7 +15,6 @@ use svg::Node;
 use crate::view::View;
 use crate::{Axis, Scale};
 use crate::datasets::Dataset;
-use crate::axis::AxisPosition;
 
 /// The BarChart struct definition.
 pub struct Chart<'a> {
@@ -71,9 +70,21 @@ impl<'a> Chart<'a> {
         self
     }
 
-    /// Add an axis at the bottom of the chart.
+    /// Add an axis at the left of the chart.
     pub fn add_axis_left<T: ToString>(mut self, scale: &'a dyn Scale<T>) -> Self {
         self.y_axis_left = Some(Axis::new_left_axis(scale, &self));
+        self
+    }
+
+    /// Add an axis at the top of the chart.
+    pub fn add_axis_top<T: ToString>(mut self, scale: &'a dyn Scale<T>) -> Self {
+        self.x_axis_top = Some(Axis::new_top_axis(scale, &self));
+        self
+    }
+
+    /// Add an axis at the right of the chart.
+    pub fn add_axis_right<T: ToString>(mut self, scale: &'a dyn Scale<T>) -> Self {
+        self.y_axis_right = Some(Axis::new_right_axis(scale, &self));
         self
     }
 

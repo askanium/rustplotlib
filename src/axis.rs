@@ -2,7 +2,7 @@ use std::string::ToString;
 use svg::node::element::Group;
 use svg::parser::Error;
 use svg::Node;
-use crate::utils::{Range, Orientation};
+use crate::utils::Orientation;
 use crate::{Scale, Chart};
 use crate::components::axis::{AxisLine, AxisTick};
 use crate::scales::ScaleType;

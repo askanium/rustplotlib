@@ -1,5 +1,3 @@
-use crate::datasets::vertical_bar::VerticalBarDataset;
-use crate::components::DatumRepresentation;
 use svg::node::element::Group;
 use svg::parser::Error;
 

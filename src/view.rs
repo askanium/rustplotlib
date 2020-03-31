@@ -4,7 +4,6 @@
 //! render the contained datasets in a chart.
 
 use crate::datasets::Dataset;
-use crate::components::DatumRepresentation;
 use svg::node::element::Group;
 use svg::parser::Error;
 use svg;

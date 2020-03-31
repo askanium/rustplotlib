@@ -1,6 +1,3 @@
-use crate::utils::{Range, Orientation};
-use crate::components::axis::AxisTick;
-
 pub mod band;
 pub mod linear;
 

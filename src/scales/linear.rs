@@ -1,10 +1,6 @@
-use std::cmp::max;
-use std::fmt;
-use std::hash::Hash;
-use std::collections::HashMap;
-use crate::utils::{Range, Orientation};
+use std::cmp::{max, Ordering};
+use crate::utils::Range;
 use crate::scales::{Scale, ScaleType};
-use crate::components::axis::AxisTick;
 
 /// The scale to represent categorical data.
 #[derive(Debug)]
@@ -20,12 +16,11 @@ pub struct ScaleLinear {
 impl ScaleLinear {
     /// Create a new linear scale with default values.
     pub fn new() -> Self {
-        let mut scale = Self {
+        Self {
             domain: Vec::new(),
             range: Range::default(),
             tick_count: 10,
-        };
-        scale
+        }
     }
 
     /// Set the domain limits for the scale band.
@@ -56,11 +51,11 @@ impl ScaleLinear {
 
     /// Takes a value x in [a, b] and returns the corresponding value in [0, 1].
     fn normalize(&self, a: f32, b: f32, x: f32) -> f32 {
-        let b = b - a;
-        match b {
-            // If a == b then return 0.5
-            0f32 => 0.5,
-            _ => (x - a) / b
+        // If a == b then return 0.5
+        if a == b {
+            0.5
+        } else {
+            (x - a) / b
         }
     }
 
@@ -88,7 +83,7 @@ impl ScaleLinear {
         };
 
         let step = match power.cmp(&0) {
-            Less => -10_f32.powi(-power) / dynamic as f32,
+            Ordering::Less => -10_f32.powi(-power) / dynamic as f32,
             _ => dynamic as f32 * 10_f32.powi(power),
         };
 

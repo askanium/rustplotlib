@@ -1,10 +1,6 @@
-use crate::utils::{Range, Orientation};
-use std::cmp::max;
-use crate::scales::{Scale, ScaleType};
-use std::fmt;
-use std::hash::Hash;
 use std::collections::HashMap;
-use crate::components::axis::AxisTick;
+use crate::utils::Range;
+use crate::scales::{Scale, ScaleType};
 
 /// The scale to represent categorical data.
 #[derive(Debug)]
@@ -38,7 +34,7 @@ pub struct ScaleBand {
 impl ScaleBand {
     /// Create a new band scale with default values.
     pub fn new() -> Self {
-        let mut scale = Self {
+        Self {
             domain: Vec::new(),
             range: Range::default(),
             offsets: Vec::new(),
@@ -50,8 +46,7 @@ impl ScaleBand {
             align: 0.5,
             r0: 0f32,
             r1: 0f32,
-        };
-        scale
+        }
     }
 
     /// Set the inner padding ratio.

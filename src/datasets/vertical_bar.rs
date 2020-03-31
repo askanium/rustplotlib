@@ -13,7 +13,6 @@ use crate::utils::Orientation;
 /// A Dataset that represents data that should be visualized.
 pub struct VerticalBarDataset<'a> {
     entries: Vec<Bar>,
-    categories: Vec<String>,
     keys: Vec<String>,
     colors: Vec<Color>,
     color_map: HashMap<String, String>,
@@ -26,7 +25,6 @@ impl<'a> VerticalBarDataset<'a> {
     pub fn new() -> Self {
         Self {
             entries: Vec::new(),
-            categories: Vec::new(),
             keys: Vec::new(),
             colors: Color::color_scheme_10(),
             color_map: HashMap::new(),
