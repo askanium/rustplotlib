@@ -1,4 +1,4 @@
-# rustplotlib
+# charts
 
 A pure Rust visualization library inspired by D3.js.
 
@@ -8,7 +8,7 @@ You can add this as a dependency to your project in your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-rustplotlib = "0.1.0"
+charts = "0.1.0"
 ```
 
 ## Chart Types
@@ -42,8 +42,8 @@ Below you can find examples of charts that are currently supported.
 Here is the sample code:
 
 ```rust
-use rustplotlib::{Chart, VerticalBarDataset, ScaleBand, ScaleLinear};
-use rustplotlib::utils::Range;
+use charts::{Chart, VerticalBarDataset, ScaleBand, ScaleLinear};
+use charts::utils::Range;
 
 fn main() {
     // Create a band scale to map categories on X axis.
@@ -94,13 +94,13 @@ You can play with `set_inner_padding()` and `set_outer_padding()` values to cust
 ### Vertical Stacked Bar Chart
 
 A simple bar chart (as the one above) is a specific instance of a stacked bar chart where there
-is only one type of values. Under the hood, `rustplotlib` treats both types pretty much the same,
+is only one type of values. Under the hood, `charts` treats both types pretty much the same,
 that's why the code is almost identical, except the input data must provide a `key` by which to group
 and stack values.
 
 ```rust
-use rustplotlib::{Chart, VerticalBarDataset, ScaleBand, ScaleLinear};
-use rustplotlib::utils::Range;
+use charts::{Chart, VerticalBarDataset, ScaleBand, ScaleLinear};
+use charts::utils::Range;
 
 fn main() {
     // Create a band scale to map categories on X axis.
