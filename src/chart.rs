@@ -1,10 +1,3 @@
-//! # Chart
-//!
-//! A chart consists of a [View] and between 2 and 4 [Axis]
-//! that define the bounds of the [Dataset]s present in the [View].
-//!
-//! Charts are the smallest self-sufficient entities that can be saved as a file.
-
 use std::string::ToString;
 use std::ffi::OsStr;
 use std::path::Path;
@@ -16,7 +9,8 @@ use crate::view::View;
 use crate::{Axis, Scale};
 use crate::datasets::Dataset;
 
-/// The BarChart struct definition.
+/// The Chart struct definition.
+/// A Chart is the smallest entity that can be saved (the bigger one is a Page (TBD)).
 pub struct Chart<'a> {
     margin_top: usize,
     margin_bottom: usize,
