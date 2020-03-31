@@ -116,8 +116,6 @@ impl ScaleBand {
 
         self.bandwidth = self.step * (1f32 - self.padding_inner);
 
-        println!("Step: {}, Bandwidth: {}, Start: {}", self.step, self.bandwidth, start);
-
         self.offsets.clear();
         for i in 0..n {
             self.offsets.push(start + self.step * i as f32);
