@@ -5,6 +5,7 @@ pub mod vertical_bar;
 pub mod horizontal_bar;
 pub mod datum;
 
-pub trait Dataset<'a> {
+/// A trait that defines a View of a dataset that can be rendered within a chart.
+pub trait View<'a> {
     fn to_svg(&self) -> Result<Group, Error>;
 }

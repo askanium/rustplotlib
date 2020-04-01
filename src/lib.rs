@@ -23,22 +23,21 @@
 //! TODO represent the structure visually
 
 mod chart;
-mod view;
+// mod view;
 mod scales;
 pub mod utils;
-mod datasets;
+mod views;
 mod components;
 mod colors;
 mod axis;
 
 pub use crate::chart::Chart;
-pub use crate::view::View;
 pub use crate::scales::band::ScaleBand;
 pub use crate::scales::linear::ScaleLinear;
 pub use crate::scales::Scale;
-pub use crate::datasets::vertical_bar::VerticalBarDataset;
-pub use crate::datasets::horizontal_bar::HorizontalBarDataset;
-pub use crate::datasets::datum::BarDatum;
+pub use crate::views::vertical_bar::VerticalBarView;
+pub use crate::views::horizontal_bar::HorizontalBarView;
+pub use crate::views::datum::BarDatum;
 pub use crate::axis::Axis;
 
 #[cfg(test)]

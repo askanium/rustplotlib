@@ -7,11 +7,11 @@ use crate::colors::Color;
 use crate::{Scale, BarDatum};
 use crate::scales::ScaleType;
 use crate::components::DatumRepresentation;
-use crate::datasets::Dataset;
+use crate::views::View;
 use crate::utils::Orientation;
 
 /// A Dataset that represents data that should be visualized.
-pub struct HorizontalBarDataset<'a> {
+pub struct HorizontalBarView<'a> {
     entries: Vec<Bar>,
     keys: Vec<String>,
     colors: Vec<Color>,
@@ -20,7 +20,7 @@ pub struct HorizontalBarDataset<'a> {
     y_scale: Option<&'a dyn Scale<String>>,
 }
 
-impl<'a> HorizontalBarDataset<'a> {
+impl<'a> HorizontalBarView<'a> {
     /// Create a new empty instance of the dataset.
     pub fn new() -> Self {
         Self {
@@ -114,14 +114,6 @@ impl<'a> HorizontalBarDataset<'a> {
         Ok(self)
     }
 
-    /// A shortcut method that will take care of creating the scales based on the data provided.
-    pub fn from_data(data: &Vec<impl BarDatum>) -> Self {
-        let mut dataset = Self::new();
-        dataset.keys = Self::extract_keys(&data);
-
-        dataset
-    }
-
     /// Extract the list of keys to use when stacking and coloring the bars.
     fn extract_keys(data: &Vec<impl BarDatum>) -> Vec<String> {
         let mut keys = Vec::new();
@@ -156,7 +148,7 @@ impl<'a> HorizontalBarDataset<'a> {
 
 }
 
-impl<'a> Dataset<'a> for HorizontalBarDataset<'a> {
+impl<'a> View<'a> for HorizontalBarView<'a> {
     fn to_svg(&self) -> Result<Group, Error> {
         Ok(self.to_svg().unwrap())
     }

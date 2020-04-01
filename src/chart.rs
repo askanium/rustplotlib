@@ -5,9 +5,8 @@ use svg;
 use svg::parser::Error;
 use svg::node::element::Group;
 use svg::Node;
-use crate::view::View;
 use crate::{Axis, Scale};
-use crate::datasets::Dataset;
+use crate::views::View;
 
 /// The Chart struct definition.
 /// A Chart is the smallest entity that can be saved (the bigger one is a Page (TBD)).
@@ -22,7 +21,7 @@ pub struct Chart<'a> {
     x_axis_bottom: Option<Axis>,
     y_axis_left: Option<Axis>,
     y_axis_right: Option<Axis>,
-    view: View<'a>,
+    views: Vec<&'a dyn View<'a>>,
 }
 
 impl<'a> Chart<'a> {
@@ -39,7 +38,7 @@ impl<'a> Chart<'a> {
             x_axis_bottom: None,
             y_axis_left: None,
             y_axis_right: None,
-            view: View::new(),
+            views: Vec::new(),
         }
     }
 
@@ -53,8 +52,8 @@ impl<'a> Chart<'a> {
     }
 
     /// Add the dataset to the chart's view.
-    pub fn add_dataset(mut self, dataset: &'a dyn Dataset<'a>) -> Self {
-        self.view.add_dataset(dataset);
+    pub fn add_view(mut self, view: &'a dyn View<'a>) -> Self {
+        self.views.push(view);
         self
     }
 
@@ -116,8 +115,13 @@ impl<'a> Chart<'a> {
         let mut group = Group::new()
             .set("class", "g-chart");
 
-        let mut view_group = self.view.to_svg()?;
-        view_group.assign("transform", format!("translate({},{})", self.margin_left, self.margin_top));
+        let mut view_group = Group::new()
+            .set("class", "g-view")
+            .set("transform", format!("translate({},{})", self.margin_left, self.margin_top));
+
+        for view in self.views.iter() {
+            view_group.append(view.to_svg()?);
+        }
         group.append(view_group);
 
         if let Some(ref axis) = self.x_axis_bottom {
