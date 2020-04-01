@@ -93,17 +93,31 @@ impl<'a> VerticalBarView<'a> {
 
         // Create a Bar entry for each category data that was grouped in the previous step.
         let mut bars = Vec::new();
+        let y_range_is_reversed = self.y_scale.unwrap().is_range_reversed();
+
         for (category, key_value_pairs) in categories.iter_mut() {
             let mut bar_blocks = Vec::new();
-            let mut start = 530f32; // TODO set this to the height of the chart since SVG coordinate system is inversed.
+            let mut stacked_start = self.y_scale.unwrap().range_end();
+            let mut stacked_end = stacked_start;
 
             for (key, value) in key_value_pairs.iter() {
-                let scaled_value = self.y_scale.unwrap().scale(value);
-                bar_blocks.push(BarBlock::new(start - scaled_value, start, scaled_value, self.color_map.get(*key).unwrap().clone()));
-                start -= scaled_value;
+                let scaled_value;
+
+                // If Y axis' scale has the range in reversed order, then adjust the computation of
+                // the start and end positions to account for SVG coordinate system origin.
+                if y_range_is_reversed {
+                    scaled_value = self.y_scale.unwrap().range_start() - self.y_scale.unwrap().scale(value);
+                    stacked_start = stacked_end;
+                    stacked_end += scaled_value;
+                } else {
+                    scaled_value = self.y_scale.unwrap().scale(value);
+                    stacked_end = stacked_start;
+                    stacked_start -= scaled_value;
+                }
+                bar_blocks.push(BarBlock::new(stacked_start, stacked_end, scaled_value, self.color_map.get(*key).unwrap().clone()));
             }
 
-            let bar = Bar::new(bar_blocks, Orientation::Vertical, category.to_string(), start.to_string(), self.x_scale.unwrap().bandwidth().unwrap(), self.x_scale.unwrap().scale(category));
+            let bar = Bar::new(bar_blocks, Orientation::Vertical, category.to_string(), stacked_end.to_string(), self.x_scale.unwrap().bandwidth().unwrap(), self.x_scale.unwrap().scale(category));
             bars.push(bar);
         }
 

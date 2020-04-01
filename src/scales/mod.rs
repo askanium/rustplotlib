@@ -19,8 +19,16 @@ pub trait Scale<T> {
     /// Get the bandwidth (if present).
     fn bandwidth(&self) -> Option<f32>;
 
-    /// Get the max value of the range.
-    fn max_range(&self) -> f32;
+    /// Get the start range value.
+    fn range_start(&self) -> f32;
+
+    /// Get the end range value.
+    fn range_end(&self) -> f32;
+
+    /// Check whether the range is in reversed order, meaning the start is greater than the end.
+    fn is_range_reversed(&self) -> bool {
+        self.range_start() > self.range_end()
+    }
 
     /// Get the list of ticks that represent the scale on a chart axis.
     fn get_ticks(&self) -> Vec<T>;

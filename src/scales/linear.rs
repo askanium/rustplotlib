@@ -36,11 +36,7 @@ impl ScaleLinear {
 
     /// Set the range limits for the scale band.
     pub fn set_range(mut self, range: Range) -> Self {
-        if range.0 > range.1 {
-            self.range = Range(range.1, range.0);
-        } else {
-            self.range = range;
-        }
+        self.range = range;
         self
     }
 
@@ -70,6 +66,7 @@ impl ScaleLinear {
         let e5 = 10_f32.sqrt();
         let e2 = 2_f32.sqrt();
         let step = (stop - start) / max(0, self.tick_count) as f32;
+        println!("Step is {}", step);
         let power = (step.ln() / 10_f32.ln()).trunc() as i32;
         let error = step / 10_f32.powi(power);
         let dynamic = if error >= e10 {
@@ -113,8 +110,13 @@ impl Scale<f32> for ScaleLinear {
         None
     }
 
-    /// Get the max value of the range.
-    fn max_range(&self) -> f32 {
+    /// Get the start range value.
+    fn range_start(&self) -> f32 {
+        self.range.0
+    }
+
+    /// Get the end range value.
+    fn range_end(&self) -> f32 {
         self.range.1
     }
 

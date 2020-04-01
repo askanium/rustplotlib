@@ -156,8 +156,13 @@ impl Scale<String> for ScaleBand {
         Some(self.bandwidth)
     }
 
-    /// Get the max value of the range.
-    fn max_range(&self) -> f32 {
+    /// Get the start range value.
+    fn range_start(&self) -> f32 {
+        self.range.0
+    }
+
+    /// Get the end range value.
+    fn range_end(&self) -> f32 {
         self.range.1
     }
 
