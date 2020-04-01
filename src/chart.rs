@@ -5,6 +5,8 @@ use svg;
 use svg::parser::Error;
 use svg::node::element::Group;
 use svg::Node;
+use svg::node::Text as TextNode;
+use svg::node::element::Text;
 use crate::{Axis, Scale};
 use crate::views::View;
 
@@ -22,13 +24,14 @@ pub struct Chart<'a> {
     y_axis_left: Option<Axis>,
     y_axis_right: Option<Axis>,
     views: Vec<&'a dyn View<'a>>,
+    title: String,
 }
 
 impl<'a> Chart<'a> {
     /// Create a new instance of a chart with default sizes.
     pub fn new() -> Self {
         Self {
-            margin_top: 50,
+            margin_top: 90,
             margin_bottom: 50,
             margin_right: 50,
             margin_left: 50,
@@ -39,7 +42,14 @@ impl<'a> Chart<'a> {
             y_axis_left: None,
             y_axis_right: None,
             views: Vec::new(),
+            title: String::new(),
         }
+    }
+
+    /// Add chart title.
+    pub fn add_title(mut self, title: String) -> Self {
+        self.title = title;
+        self
     }
 
     /// Set the margins of the chart to provided values.
@@ -111,9 +121,28 @@ impl<'a> Chart<'a> {
         self.height - self.margin_top - self.margin_bottom
     }
 
+    /// Generate the SVG for the chart and its components.
     fn to_svg(&self) -> Result<Group, Error> {
         let mut group = Group::new()
             .set("class", "g-chart");
+
+        // Add chart title
+        if self.title.len() > 0 {
+            let title_group = Group::new()
+                .set("class", "g-title")
+                .set("transform", format!("translate({},{})", self.width / 2, 40))
+                .add(Text::new()
+                    .set("x", 0)
+                    .set("y", 0)
+                    .set("dy", ".35em")
+                    .set("fill", "#777")
+                    .set("text-anchor", "middle")
+                    .set("font-size", "24px")
+                    .set("font-family", "sans-serif")
+                    .add(TextNode::new(&self.title))
+                );
+            group.append(title_group);
+        }
 
         let mut view_group = Group::new()
             .set("class", "g-view")
