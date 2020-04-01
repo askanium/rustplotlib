@@ -129,18 +129,6 @@ impl<'a> HorizontalBarView<'a> {
         keys
     }
 
-    /// Generate the SVG representation of the dataset.
-    pub fn to_svg(&self) -> Result<svg::node::element::Group, Error> {
-        let mut group = svg::node::element::Group::new();
-
-        for entry in self.entries.iter() {
-            let child_svg = entry.to_svg()?;
-            group.append(child_svg);
-        }
-
-        Ok(group)
-    }
-
     /// Add a [Bar] entry to the dataset entries list.
     fn add_bar(&mut self, bar: Bar) {
         self.entries.push(bar);
@@ -149,7 +137,15 @@ impl<'a> HorizontalBarView<'a> {
 }
 
 impl<'a> View<'a> for HorizontalBarView<'a> {
+    /// Generate the SVG representation of the view.
     fn to_svg(&self) -> Result<Group, Error> {
-        Ok(self.to_svg().unwrap())
+        let mut group = Group::new();
+
+        for entry in self.entries.iter() {
+            let child_svg = entry.to_svg()?;
+            group.append(child_svg);
+        }
+
+        Ok(group)
     }
 }
