@@ -2,6 +2,7 @@ use svg::node::element::Group;
 use svg::parser::Error;
 
 pub mod vertical_bar;
+pub mod horizontal_bar;
 pub mod datum;
 
 pub trait Dataset<'a> {

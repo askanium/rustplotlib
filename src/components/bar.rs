@@ -42,8 +42,16 @@ impl Bar {
 impl DatumRepresentation for Bar {
 
     fn to_svg(&self) -> Result<Group, Error> {
+        let (bar_group_offset_x, bar_group_offset_y) = {
+            match self.orientation {
+                Orientation::Vertical => (self.offset, 0_f32),
+                Orientation::Horizontal => (0_f32, self.offset),
+            }
+        };
+
         let mut group = Group::new()
-            .set("transform", format!("translate({},0)", self.offset));
+            .set("transform", format!("translate({},{})", bar_group_offset_x, bar_group_offset_y))
+            .set("class", "bar");
 
         let (x_attr, y_attr, width_attr, height_attr) = match self.orientation {
             Orientation::Horizontal => ("x", "y", "width", "height"),

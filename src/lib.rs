@@ -37,6 +37,7 @@ pub use crate::scales::band::ScaleBand;
 pub use crate::scales::linear::ScaleLinear;
 pub use crate::scales::Scale;
 pub use crate::datasets::vertical_bar::VerticalBarDataset;
+pub use crate::datasets::horizontal_bar::HorizontalBarDataset;
 pub use crate::datasets::datum::BarDatum;
 pub use crate::axis::Axis;
 
