@@ -51,6 +51,7 @@ impl ScaleLinear {
         if a == b {
             0.5
         } else {
+            let b = b - a;
             (x - a) / b
         }
     }
@@ -66,7 +67,6 @@ impl ScaleLinear {
         let e5 = 10_f32.sqrt();
         let e2 = 2_f32.sqrt();
         let step = (stop - start) / max(0, self.tick_count) as f32;
-        println!("Step is {}", step);
         let power = (step.ln() / 10_f32.ln()).trunc() as i32;
         let error = step / 10_f32.powi(power);
         let dynamic = if error >= e10 {
