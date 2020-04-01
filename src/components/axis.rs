@@ -2,7 +2,7 @@ use svg::node::element::{Group, Line};
 use svg::node::Text as TextNode;
 use svg::node::element::Text;
 use svg::Node;
-use crate::utils::Orientation;
+use crate::axis::AxisPosition;
 
 /// A simple struct that represents an axis line.
 pub(crate) struct AxisLine {
@@ -35,7 +35,7 @@ impl AxisLine {
 
 /// A struct to represent an axis tick
 pub struct AxisTick {
-    axis_orientation: Orientation,
+    axis_position: AxisPosition,
     label_offset: usize,
     tick_offset: f32,
     label: String,
@@ -43,12 +43,12 @@ pub struct AxisTick {
 
 impl AxisTick {
     /// Create a new instance of AxisTick.
-    pub fn new(tick_offset: f32, label_offset: usize, label: String, axis_orientation: Orientation) -> Self {
+    pub fn new(tick_offset: f32, label_offset: usize, label: String, axis_position: AxisPosition) -> Self {
         Self {
             label_offset,
             tick_offset,
             label,
-            axis_orientation,
+            axis_position,
         }
     }
 
@@ -59,17 +59,29 @@ impl AxisTick {
         let tick_label_offset: (isize, isize);
         let tick_label_text_anchor: &str;
 
-        match self.axis_orientation {
-            Orientation::Vertical => {
+        match self.axis_position {
+            AxisPosition::Left => {
                 offsets = (0_f32, self.tick_offset);
                 tick_line_p2 = (-6, 0);
                 tick_label_offset = (-(self.label_offset as isize), 0);
                 tick_label_text_anchor = "end";
             },
-            Orientation::Horizontal => {
+            AxisPosition::Bottom => {
                 offsets = (self.tick_offset, 0_f32);
                 tick_line_p2 = (0, 6);
                 tick_label_offset = (0, self.label_offset as isize);
+                tick_label_text_anchor = "middle";
+            },
+            AxisPosition::Right => {
+                offsets = (0_f32, self.tick_offset);
+                tick_line_p2 = (6, 0);
+                tick_label_offset = (self.label_offset as isize, 0);
+                tick_label_text_anchor = "start";
+            },
+            AxisPosition::Top => {
+                offsets = (self.tick_offset, 0_f32);
+                tick_line_p2 = (0, -6);
+                tick_label_offset = (0, -(self.label_offset as isize));
                 tick_label_text_anchor = "middle";
             },
         };

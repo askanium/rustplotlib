@@ -28,10 +28,10 @@ impl<'a> Chart<'a> {
     /// Create a new instance of a chart with default sizes.
     pub fn new() -> Self {
         Self {
-            margin_top: 20,
+            margin_top: 50,
             margin_bottom: 50,
-            margin_right: 20,
-            margin_left: 60,
+            margin_right: 50,
+            margin_left: 50,
             width: 800,
             height: 600,
             x_axis_top: None,
@@ -124,6 +124,12 @@ impl<'a> Chart<'a> {
         }
         group.append(view_group);
 
+        if let Some(ref axis) = self.x_axis_top {
+            let mut axis_group = axis.to_svg().unwrap();
+            axis_group.assign("transform", format!("translate({},{})", self.margin_left, self.margin_top));
+            group.append(axis_group);
+        };
+
         if let Some(ref axis) = self.x_axis_bottom {
             let mut axis_group = axis.to_svg().unwrap();
             axis_group.assign("transform", format!("translate({},{})", self.margin_left, self.height - self.margin_bottom));
@@ -133,6 +139,12 @@ impl<'a> Chart<'a> {
         if let Some(ref axis) = self.y_axis_left {
             let mut axis_group = axis.to_svg().unwrap();
             axis_group.assign("transform", format!("translate({},{})", self.margin_left, self.margin_top));
+            group.append(axis_group);
+        };
+
+        if let Some(ref axis) = self.y_axis_right {
+            let mut axis_group = axis.to_svg().unwrap();
+            axis_group.assign("transform", format!("translate({},{})", self.width - self.margin_right, self.margin_top));
             group.append(axis_group);
         };
 

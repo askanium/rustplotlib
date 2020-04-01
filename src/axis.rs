@@ -2,7 +2,6 @@ use std::string::ToString;
 use svg::node::element::Group;
 use svg::parser::Error;
 use svg::Node;
-use crate::utils::Orientation;
 use crate::{Scale, Chart};
 use crate::components::axis::{AxisLine, AxisTick};
 use crate::scales::ScaleType;
@@ -75,12 +74,6 @@ impl Axis {
 
     /// Generate ticks for the axis based on the scale and position.
     fn generate_ticks<'a, T: ToString>(scale: &'a dyn Scale<T>, position: AxisPosition, chart: &Chart<'a>) -> Vec<AxisTick> {
-        let orientation = match position {
-            AxisPosition::Top => Orientation::Horizontal,
-            AxisPosition::Bottom => Orientation::Horizontal,
-            AxisPosition::Left => Orientation::Vertical,
-            AxisPosition::Right => Orientation::Vertical,
-        };
         let mut ticks = Vec::new();
 
         for tick in scale.get_ticks() {
@@ -94,7 +87,7 @@ impl Axis {
                 AxisPosition::Right if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
                 AxisPosition::Right => chart.get_view_height() as f32 - scale.scale(&tick),
             };
-            let axis_tick = AxisTick::new(tick_offset, 16, tick.to_string(), orientation);
+            let axis_tick = AxisTick::new(tick_offset, 16, tick.to_string(), position);
             ticks.push(axis_tick);
         }
 
