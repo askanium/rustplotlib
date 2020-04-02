@@ -107,7 +107,7 @@ impl Scale<f32> for ScaleLinear {
 
     /// Get the bandwidth (if present).
     fn bandwidth(&self) -> Option<f32> {
-        None
+        Some(0_f32)
     }
 
     /// Get the start range value.

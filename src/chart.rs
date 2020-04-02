@@ -194,15 +194,6 @@ impl<'a> Chart<'a> {
             group.append(title_group);
         }
 
-        let mut view_group = Group::new()
-            .set("class", "g-view")
-            .set("transform", format!("translate({},{})", self.margin_left, self.margin_top));
-
-        for view in self.views.iter() {
-            view_group.append(view.to_svg()?);
-        }
-        group.append(view_group);
-
         if let Some(ref axis) = self.x_axis_top {
             let mut axis_group = axis.to_svg().unwrap();
             axis_group.assign("transform", format!("translate({},{})", self.margin_left, self.margin_top));
@@ -226,6 +217,15 @@ impl<'a> Chart<'a> {
             axis_group.assign("transform", format!("translate({},{})", self.width - self.margin_right, self.margin_top));
             group.append(axis_group);
         };
+
+        let mut view_group = Group::new()
+            .set("class", "g-view")
+            .set("transform", format!("translate({},{})", self.margin_left, self.margin_top));
+
+        for view in self.views.iter() {
+            view_group.append(view.to_svg()?);
+        }
+        group.append(view_group);
 
         Ok(group)
     }
