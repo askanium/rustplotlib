@@ -10,7 +10,7 @@ use crate::components::DatumRepresentation;
 use crate::views::View;
 use crate::utils::Orientation;
 
-/// A Dataset that represents data that should be visualized.
+/// A View that represents data as vertical bars.
 pub struct VerticalBarView<'a> {
     label_position: BarLabelPosition,
     labels_visible: bool,
@@ -23,7 +23,7 @@ pub struct VerticalBarView<'a> {
 }
 
 impl<'a> VerticalBarView<'a> {
-    /// Create a new empty instance of the dataset.
+    /// Create a new empty instance of the view.
     pub fn new() -> Self {
         Self {
             label_position: BarLabelPosition::EndOutside,
