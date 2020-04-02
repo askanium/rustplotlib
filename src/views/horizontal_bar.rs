@@ -13,6 +13,7 @@ use crate::utils::Orientation;
 /// A Dataset that represents data that should be visualized.
 pub struct HorizontalBarView<'a> {
     label_position: BarLabelPosition,
+    labels_visible: bool,
     entries: Vec<Bar>,
     keys: Vec<String>,
     colors: Vec<Color>,
@@ -26,6 +27,7 @@ impl<'a> HorizontalBarView<'a> {
     pub fn new() -> Self {
         Self {
             label_position: BarLabelPosition::EndOutside,
+            labels_visible: true,
             entries: Vec::new(),
             keys: Vec::new(),
             colors: Color::color_scheme_10(),
@@ -56,6 +58,12 @@ impl<'a> HorizontalBarView<'a> {
     /// Set the positioning of the labels.
     pub fn set_label_position(mut self, label_position: BarLabelPosition) -> Self {
         self.label_position = label_position;
+        self
+    }
+
+    /// Hide labels on the chart.
+    pub fn do_not_show_labels(mut self) -> Self {
+        self.labels_visible = false;
         self
     }
 
@@ -111,7 +119,7 @@ impl<'a> HorizontalBarView<'a> {
                 start += scaled_value;
             }
 
-            let bar = Bar::new(bar_blocks, Orientation::Horizontal, category.to_string(), self.label_position, self.y_scale.unwrap().bandwidth().unwrap(), self.y_scale.unwrap().scale(category));
+            let bar = Bar::new(bar_blocks, Orientation::Horizontal, category.to_string(), self.label_position, self.labels_visible, self.y_scale.unwrap().bandwidth().unwrap(), self.y_scale.unwrap().scale(category));
             bars.push(bar);
         }
 

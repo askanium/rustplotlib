@@ -13,6 +13,7 @@ use crate::utils::Orientation;
 /// A Dataset that represents data that should be visualized.
 pub struct VerticalBarView<'a> {
     label_position: BarLabelPosition,
+    labels_visible: bool,
     entries: Vec<Bar>,
     keys: Vec<String>,
     colors: Vec<Color>,
@@ -26,6 +27,7 @@ impl<'a> VerticalBarView<'a> {
     pub fn new() -> Self {
         Self {
             label_position: BarLabelPosition::EndOutside,
+            labels_visible: true,
             entries: Vec::new(),
             keys: Vec::new(),
             colors: Color::color_scheme_10(),
@@ -56,6 +58,11 @@ impl<'a> VerticalBarView<'a> {
     /// Set the positioning of the labels.
     pub fn set_label_position(mut self, label_position: BarLabelPosition) -> Self {
         self.label_position = label_position;
+        self
+    }
+    /// Hide labels on the chart.
+    pub fn do_not_show_labels(mut self) -> Self {
+        self.labels_visible = false;
         self
     }
 
@@ -125,7 +132,7 @@ impl<'a> VerticalBarView<'a> {
                 bar_blocks.push(BarBlock::new(stacked_start, stacked_end, *value, self.color_map.get(*key).unwrap().clone()));
             }
 
-            let bar = Bar::new(bar_blocks, Orientation::Vertical, category.to_string(), self.label_position, self.x_scale.unwrap().bandwidth().unwrap(), self.x_scale.unwrap().scale(category));
+            let bar = Bar::new(bar_blocks, Orientation::Vertical, category.to_string(), self.label_position, self.labels_visible, self.x_scale.unwrap().bandwidth().unwrap(), self.x_scale.unwrap().scale(category));
             bars.push(bar);
         }
 
