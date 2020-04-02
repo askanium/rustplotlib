@@ -33,8 +33,8 @@ impl<'a> Chart<'a> {
         Self {
             margin_top: 90,
             margin_bottom: 50,
-            margin_right: 50,
-            margin_left: 50,
+            margin_right: 40,
+            margin_left: 60,
             width: 800,
             height: 600,
             x_axis_top: None,
