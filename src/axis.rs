@@ -2,12 +2,14 @@ use std::string::ToString;
 use svg::node::element::Group;
 use svg::parser::Error;
 use svg::Node;
+use svg::node::Text as TextNode;
+use svg::node::element::Text;
 use crate::{Scale, Chart};
 use crate::components::axis::{AxisLine, AxisTick};
 use crate::scales::ScaleType;
 
 /// Enum of possible axis positions on the chart.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum AxisPosition {
     Top,
     Right,
@@ -20,6 +22,8 @@ pub struct Axis {
     ticks: Vec<AxisTick>,
     axis_line: AxisLine,
     position: AxisPosition,
+    label: String,
+    length: usize,
 }
 
 impl Axis {
@@ -29,6 +33,8 @@ impl Axis {
             ticks: Self::generate_ticks(scale, position, chart),
             position,
             axis_line: Self::get_axis_line(position, chart),
+            label: String::new(),
+            length: Self::get_axis_length(position, chart),
         }
     }
 
@@ -52,6 +58,20 @@ impl Axis {
         Self::new(scale, AxisPosition::Left, chart)
     }
 
+    /// Set axis label.
+    pub fn set_axis_label(&mut self, label: String) {
+        self.label = label;
+    }
+
+    /// Compute the length of the axis.
+    fn get_axis_length<'a>(position: AxisPosition, chart: &Chart<'a>) -> usize {
+        if position == AxisPosition::Top || position == AxisPosition::Bottom {
+            chart.get_view_width()
+        } else {
+            chart.get_view_height()
+        }
+    }
+
     /// Generate svg for the axis.
     pub fn to_svg(&self) -> Result<Group, Error> {
         let axis_class = match self.position {
@@ -69,12 +89,38 @@ impl Axis {
             group.append(tick.to_svg().unwrap());
         }
 
+        if self.label.len() > 0 {
+            let (x, y, rotate) = match self.position {
+                AxisPosition::Top => ((self.length / 2) as i32, -32, 0),
+                AxisPosition::Bottom => ((self.length / 2) as i32, 42, 0),
+                AxisPosition::Left => (-(self.length as i32 / 2), -42, -90),
+                AxisPosition::Right => ((self.length as i32 / 2), -42, 90),
+            };
+            let axis_label = Text::new()
+                .set("x", x)
+                .set("y", y)
+                .set("text-anchor", "middle")
+                .set("font-size", "14px")
+                .set("font-family", "sans-serif")
+                .set("fill", "#777")
+                .set("transform", format!("rotate({})", rotate))
+                .add(TextNode::new(&self.label));
+            group.append(axis_label);
+        }
+
         Ok(group)
     }
 
     /// Generate ticks for the axis based on the scale and position.
     fn generate_ticks<'a, T: ToString>(scale: &'a dyn Scale<T>, position: AxisPosition, chart: &Chart<'a>) -> Vec<AxisTick> {
         let mut ticks = Vec::new();
+        let label_offset = {
+            if position == AxisPosition::Top || position == AxisPosition::Bottom {
+                16
+            } else {
+                12
+            }
+        };
 
         for tick in scale.get_ticks() {
             let tick_offset = match position {
@@ -87,7 +133,7 @@ impl Axis {
                 AxisPosition::Right if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
                 AxisPosition::Right => chart.get_view_height() as f32 - scale.scale(&tick),
             };
-            let axis_tick = AxisTick::new(tick_offset, 16, tick.to_string(), position);
+            let axis_tick = AxisTick::new(tick_offset, label_offset, tick.to_string(), position);
             ticks.push(axis_tick);
         }
 

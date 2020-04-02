@@ -91,6 +91,46 @@ impl<'a> Chart<'a> {
         self
     }
 
+    /// Add a label for the right of the chart.
+    pub fn add_right_axis_label<T: ToString>(mut self, label: T) -> Self {
+        if let Some(ref mut axis) = self.y_axis_right {
+            axis.set_axis_label(label.to_string())
+        } else {
+            panic!("You cannot add a label to right axis without adding an axis first.")
+        }
+        self
+    }
+
+    /// Add a label for the left of the chart.
+    pub fn add_left_axis_label<T: ToString>(mut self, label: T) -> Self {
+        if let Some(ref mut axis) = self.y_axis_left {
+            axis.set_axis_label(label.to_string())
+        } else {
+            panic!("You cannot add a label to left axis without adding an axis first.")
+        }
+        self
+    }
+
+    /// Add a label for the top of the chart.
+    pub fn add_top_axis_label<T: ToString>(mut self, label: T) -> Self {
+        if let Some(ref mut axis) = self.x_axis_top {
+            axis.set_axis_label(label.to_string())
+        } else {
+            panic!("You cannot add a label to top axis without adding an axis first.")
+        }
+        self
+    }
+
+    /// Add a label for the bottom of the chart.
+    pub fn add_bottom_axis_label<T: ToString>(mut self, label: T) -> Self {
+        if let Some(ref mut axis) = self.x_axis_bottom {
+            axis.set_axis_label(label.to_string())
+        } else {
+            panic!("You cannot add a label to bottom axis without adding an axis first.")
+        }
+        self
+    }
+
     /// Return the offset from the left where the view starts.
     pub fn get_view_horizontal_start_offset(&self) -> usize {
         self.margin_left
@@ -114,6 +154,16 @@ impl<'a> Chart<'a> {
     /// Return the width of the view.
     pub fn get_view_width(&self) -> usize {
         self.width - self.margin_left - self.margin_right
+    }
+
+    /// Return the width of the chart.
+    pub fn get_chart_width(&self) -> usize {
+        self.width
+    }
+
+    /// Return the height of the chart.
+    pub fn get_chart_height(&self) -> usize {
+        self.height
     }
 
     /// Return the height of the view.
