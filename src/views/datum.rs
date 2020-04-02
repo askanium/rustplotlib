@@ -28,6 +28,20 @@ pub trait PointDatum<T, U> {
     fn get_key(&self) -> String;
 }
 
+impl BarDatum for (f32, &str) {
+    fn get_category(&self) -> String {
+        String::from(self.1)
+    }
+
+    fn get_value(&self) -> f32 {
+        self.0
+    }
+
+    fn get_key(&self) -> String {
+        String::new()
+    }
+}
+
 impl BarDatum for (String, f32, String) {
     fn get_category(&self) -> String {
         String::from(&self.0)

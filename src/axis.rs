@@ -127,11 +127,11 @@ impl Axis {
                 AxisPosition::Bottom if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
                 AxisPosition::Bottom => scale.scale(&tick),
                 AxisPosition::Left if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
-                AxisPosition::Left => chart.get_view_height() as f32 - scale.scale(&tick),
+                AxisPosition::Left => scale.scale(&tick),
                 AxisPosition::Top if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
                 AxisPosition::Top => scale.scale(&tick),
                 AxisPosition::Right if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
-                AxisPosition::Right => chart.get_view_height() as f32 - scale.scale(&tick),
+                AxisPosition::Right => scale.scale(&tick),
             };
             let axis_tick = AxisTick::new(tick_offset, label_offset, tick.to_string(), position);
             ticks.push(axis_tick);
