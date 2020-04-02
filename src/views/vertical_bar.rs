@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use svg::parser::Error;
 use svg::node::Node;
 use svg::node::element::Group;
-use crate::components::bar::{Bar, BarBlock};
+use crate::components::bar::{Bar, BarBlock, BarLabelPosition};
 use crate::colors::Color;
 use crate::{Scale, BarDatum};
 use crate::scales::ScaleType;
@@ -12,6 +12,7 @@ use crate::utils::Orientation;
 
 /// A Dataset that represents data that should be visualized.
 pub struct VerticalBarView<'a> {
+    label_position: BarLabelPosition,
     entries: Vec<Bar>,
     keys: Vec<String>,
     colors: Vec<Color>,
@@ -24,6 +25,7 @@ impl<'a> VerticalBarView<'a> {
     /// Create a new empty instance of the dataset.
     pub fn new() -> Self {
         Self {
+            label_position: BarLabelPosition::EndOutside,
             entries: Vec::new(),
             keys: Vec::new(),
             colors: Color::color_scheme_10(),
@@ -48,6 +50,12 @@ impl<'a> VerticalBarView<'a> {
     /// Set the keys in case of a stacked bar chart.
     pub fn set_keys(mut self, keys: Vec<String>) -> Self {
         self.keys = keys;
+        self
+    }
+
+    /// Set the positioning of the labels.
+    pub fn set_label_position(mut self, label_position: BarLabelPosition) -> Self {
+        self.label_position = label_position;
         self
     }
 
@@ -114,10 +122,10 @@ impl<'a> VerticalBarView<'a> {
                     stacked_end = stacked_start;
                     stacked_start -= scaled_value;
                 }
-                bar_blocks.push(BarBlock::new(stacked_start, stacked_end, scaled_value, self.color_map.get(*key).unwrap().clone()));
+                bar_blocks.push(BarBlock::new(stacked_start, stacked_end, *value, self.color_map.get(*key).unwrap().clone()));
             }
 
-            let bar = Bar::new(bar_blocks, Orientation::Vertical, category.to_string(), stacked_end.to_string(), self.x_scale.unwrap().bandwidth().unwrap(), self.x_scale.unwrap().scale(category));
+            let bar = Bar::new(bar_blocks, Orientation::Vertical, category.to_string(), self.label_position, self.x_scale.unwrap().bandwidth().unwrap(), self.x_scale.unwrap().scale(category));
             bars.push(bar);
         }
 

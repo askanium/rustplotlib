@@ -13,7 +13,7 @@ impl Range {
 }
 
 /// Define the orientation enum to aid in rendering and business logic.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Orientation {
     Horizontal,
     Vertical,

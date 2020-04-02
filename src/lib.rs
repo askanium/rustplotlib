@@ -39,6 +39,7 @@ pub use crate::views::vertical_bar::VerticalBarView;
 pub use crate::views::horizontal_bar::HorizontalBarView;
 pub use crate::views::datum::BarDatum;
 pub use crate::axis::Axis;
+pub use crate::components::bar::BarLabelPosition;
 
 #[cfg(test)]
 mod tests {

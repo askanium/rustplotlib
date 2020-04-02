@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use svg::parser::Error;
 use svg::node::Node;
 use svg::node::element::Group;
-use crate::components::bar::{Bar, BarBlock};
+use crate::components::bar::{Bar, BarBlock, BarLabelPosition};
 use crate::colors::Color;
 use crate::{Scale, BarDatum};
 use crate::scales::ScaleType;
@@ -12,6 +12,7 @@ use crate::utils::Orientation;
 
 /// A Dataset that represents data that should be visualized.
 pub struct HorizontalBarView<'a> {
+    label_position: BarLabelPosition,
     entries: Vec<Bar>,
     keys: Vec<String>,
     colors: Vec<Color>,
@@ -24,6 +25,7 @@ impl<'a> HorizontalBarView<'a> {
     /// Create a new empty instance of the dataset.
     pub fn new() -> Self {
         Self {
+            label_position: BarLabelPosition::EndOutside,
             entries: Vec::new(),
             keys: Vec::new(),
             colors: Color::color_scheme_10(),
@@ -48,6 +50,12 @@ impl<'a> HorizontalBarView<'a> {
     /// Set the keys in case of a stacked bar chart.
     pub fn set_keys(mut self, keys: Vec<String>) -> Self {
         self.keys = keys;
+        self
+    }
+
+    /// Set the positioning of the labels.
+    pub fn set_label_position(mut self, label_position: BarLabelPosition) -> Self {
+        self.label_position = label_position;
         self
     }
 
@@ -99,11 +107,11 @@ impl<'a> HorizontalBarView<'a> {
 
             for (key, value) in key_value_pairs.iter() {
                 let scaled_value = self.x_scale.unwrap().scale(value);
-                bar_blocks.push(BarBlock::new(start, start + scaled_value, scaled_value, self.color_map.get(*key).unwrap().clone()));
+                bar_blocks.push(BarBlock::new(start, start + scaled_value, *value, self.color_map.get(*key).unwrap().clone()));
                 start += scaled_value;
             }
 
-            let bar = Bar::new(bar_blocks, Orientation::Horizontal, category.to_string(), start.to_string(), self.y_scale.unwrap().bandwidth().unwrap(), self.y_scale.unwrap().scale(category));
+            let bar = Bar::new(bar_blocks, Orientation::Horizontal, category.to_string(), self.label_position, self.y_scale.unwrap().bandwidth().unwrap(), self.y_scale.unwrap().scale(category));
             bars.push(bar);
         }
 
