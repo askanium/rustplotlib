@@ -91,7 +91,7 @@ impl DatumRepresentation for Bar {
                     BarLabelPosition::StartOutside if self.orientation == Orientation::Vertical => (block.1 + 16_f32, "middle"),
                     BarLabelPosition::StartInside if self.orientation == Orientation::Horizontal => (block.0 + 12_f32, "start"),
                     BarLabelPosition::StartInside if self.orientation == Orientation::Vertical => (block.1 - 16_f32, "middle"),
-                    BarLabelPosition::Center if self.orientation == Orientation::Horizontal => ((block.1 - block.0) / 2_f32, "middle"),
+                    BarLabelPosition::Center if self.orientation == Orientation::Horizontal => (block.0 + (block.1 - block.0) / 2_f32, "middle"),
                     BarLabelPosition::Center if self.orientation == Orientation::Vertical => (block.0 + (block.1 - block.0) / 2_f32, "middle"),
                     BarLabelPosition::EndInside if self.orientation == Orientation::Horizontal => (block.1 - 12_f32, "end"),
                     BarLabelPosition::EndInside if self.orientation == Orientation::Vertical => (block.0 + 16_f32, "middle"),

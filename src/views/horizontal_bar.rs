@@ -115,14 +115,25 @@ impl<'a> HorizontalBarView<'a> {
 
         // Create a Bar entry for each category data that was grouped in the previous step.
         let mut bars = Vec::new();
+        let x_range_is_reversed = self.x_scale.unwrap().is_range_reversed();
+
         for (category, key_value_pairs) in categories.iter_mut() {
+            let mut value_acc = 0_f32;
             let mut bar_blocks = Vec::new();
-            let mut start = 0_f32;
+            let mut stacked_start = self.x_scale.unwrap().scale(&value_acc);
+            let mut stacked_end = stacked_start;
 
             for (key, value) in key_value_pairs.iter() {
-                let scaled_value = self.x_scale.unwrap().scale(value);
-                bar_blocks.push(BarBlock::new(start, start + scaled_value, *value, self.color_map.get(*key).unwrap().clone()));
-                start += scaled_value;
+                value_acc += *value;
+
+                if x_range_is_reversed {
+                    stacked_end = stacked_start;
+                    stacked_start = self.x_scale.unwrap().scale(&value_acc);
+                } else {
+                    stacked_start = stacked_end;
+                    stacked_end = self.x_scale.unwrap().scale(&value_acc);
+                }
+                bar_blocks.push(BarBlock::new(stacked_start, stacked_end, *value, self.color_map.get(*key).unwrap().clone()));
             }
 
             let bar = Bar::new(bar_blocks, Orientation::Horizontal, category.to_string(), self.label_position, self.labels_visible, self.y_scale.unwrap().bandwidth().unwrap(), self.y_scale.unwrap().scale(category));
