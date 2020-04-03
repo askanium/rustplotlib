@@ -1,0 +1,127 @@
+<svg height="600" viewBox="0 0 800 600" width="800" xmlns="http://www.w3.org/2000/svg">
+<g class="g-chart">
+<g class="g-title" transform="translate(400,40)">
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="24px" text-anchor="middle" x="0" y="0">
+Bar Chart
+</text>
+</g>
+<g class="x-axis" transform="translate(60,550)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1" x1="0" x2="700" y1="0" y2="0"/>
+<g class="tick" transform="translate(124.19356,0)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="0" y1="0" y2="6"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="middle" x="0" y="16">
+A
+</text>
+</g>
+<g class="tick" transform="translate(350,0)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="0" y1="0" y2="6"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="middle" x="0" y="16">
+B
+</text>
+</g>
+<g class="tick" transform="translate(575.80646,0)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="0" y1="0" y2="6"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="middle" x="0" y="16">
+C
+</text>
+</g>
+<text fill="#777" font-family="sans-serif" font-size="14px" text-anchor="middle" transform="rotate(0)" x="350" y="42">
+Categories
+</text>
+</g>
+<g class="y-axis" transform="translate(60,90)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1" x1="0" x2="0" y1="0" y2="460"/>
+<g class="tick" transform="translate(0,460)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="-6" y1="0" y2="0"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="end" x="-12" y="0">
+0
+</text>
+</g>
+<g class="tick" transform="translate(0,414)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="-6" y1="0" y2="0"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="end" x="-12" y="0">
+10
+</text>
+</g>
+<g class="tick" transform="translate(0,368)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="-6" y1="0" y2="0"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="end" x="-12" y="0">
+20
+</text>
+</g>
+<g class="tick" transform="translate(0,322)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="-6" y1="0" y2="0"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="end" x="-12" y="0">
+30
+</text>
+</g>
+<g class="tick" transform="translate(0,276)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="-6" y1="0" y2="0"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="end" x="-12" y="0">
+40
+</text>
+</g>
+<g class="tick" transform="translate(0,230)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="-6" y1="0" y2="0"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="end" x="-12" y="0">
+50
+</text>
+</g>
+<g class="tick" transform="translate(0,184)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="-6" y1="0" y2="0"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="end" x="-12" y="0">
+60
+</text>
+</g>
+<g class="tick" transform="translate(0,138)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="-6" y1="0" y2="0"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="end" x="-12" y="0">
+70
+</text>
+</g>
+<g class="tick" transform="translate(0,92)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="-6" y1="0" y2="0"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="end" x="-12" y="0">
+80
+</text>
+</g>
+<g class="tick" transform="translate(0,46)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="-6" y1="0" y2="0"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="end" x="-12" y="0">
+90
+</text>
+</g>
+<g class="tick" transform="translate(0,0)">
+<line shape-rendering="crispEdges" stroke="#bbbbbb" stroke-width="1px" x1="0" x2="-6" y1="0" y2="0"/>
+<text dy=".35em" fill="#777" font-family="sans-serif" font-size="14px" text-anchor="end" x="-12" y="0">
+100
+</text>
+</g>
+<text fill="#777" font-family="sans-serif" font-size="14px" text-anchor="middle" transform="rotate(-90)" x="-230" y="-42">
+Units of Measurement
+</text>
+</g>
+<g class="g-view" transform="translate(60,90)">
+<g>
+<g class="bar" transform="translate(474.19354,0)">
+<rect fill="#1f77b4" height="138" shape-rendering="crispEdges" width="203.2258" x="0" y="322"/>
+<text dy=".35em" fill="#333" font-family="sans-serif" font-size="14px" text-anchor="middle" x="101.6129" y="306">
+30
+</text>
+</g>
+<g class="bar" transform="translate(248.3871,0)">
+<rect fill="#1f77b4" height="46" shape-rendering="crispEdges" width="203.2258" x="0" y="414"/>
+<text dy=".35em" fill="#333" font-family="sans-serif" font-size="14px" text-anchor="middle" x="101.6129" y="398">
+10
+</text>
+</g>
+<g class="bar" transform="translate(22.580658,0)">
+<rect fill="#1f77b4" height="414" shape-rendering="crispEdges" width="203.2258" x="0" y="46"/>
+<text dy=".35em" fill="#333" font-family="sans-serif" font-size="14px" text-anchor="middle" x="101.6129" y="30">
+90
+</text>
+</g>
+</g>
+</g>
+</g>
+</svg>
