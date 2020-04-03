@@ -23,7 +23,7 @@ pub struct Axis {
     axis_line: AxisLine,
     position: AxisPosition,
     label: String,
-    length: usize,
+    length: isize,
 }
 
 impl Axis {
@@ -64,7 +64,7 @@ impl Axis {
     }
 
     /// Compute the length of the axis.
-    fn get_axis_length<'a>(position: AxisPosition, chart: &Chart<'a>) -> usize {
+    fn get_axis_length<'a>(position: AxisPosition, chart: &Chart<'a>) -> isize {
         if position == AxisPosition::Top || position == AxisPosition::Bottom {
             chart.get_view_width()
         } else {

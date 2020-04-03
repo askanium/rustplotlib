@@ -20,12 +20,12 @@ pub enum Orientation {
 /// The Chart struct definition.
 /// A Chart is the smallest entity that can be saved (the bigger one is a Page (TBD)).
 pub struct Chart<'a> {
-    margin_top: usize,
-    margin_bottom: usize,
-    margin_right: usize,
-    margin_left: usize,
-    width: usize,
-    height: usize,
+    margin_top: isize,
+    margin_bottom: isize,
+    margin_right: isize,
+    margin_left: isize,
+    width: isize,
+    height: isize,
     x_axis_top: Option<Axis>,
     x_axis_bottom: Option<Axis>,
     y_axis_left: Option<Axis>,
@@ -53,6 +53,18 @@ impl<'a> Chart<'a> {
         }
     }
 
+    /// Set chart width.
+    pub fn set_width(mut self, width: isize) -> Self {
+        self.width = width;
+        self
+    }
+
+    /// Set chart height.
+    pub fn set_height(mut self, height: isize) -> Self {
+        self.height = height;
+        self
+    }
+
     /// Add chart title.
     pub fn add_title(mut self, title: String) -> Self {
         self.title = title;
@@ -60,7 +72,7 @@ impl<'a> Chart<'a> {
     }
 
     /// Set the margins of the chart to provided values.
-    pub fn set_margins(mut self, top: usize, right: usize, bottom: usize, left: usize) -> Self {
+    pub fn set_margins(mut self, top: isize, right: isize, bottom: isize, left: isize) -> Self {
         self.margin_top = top;
         self.margin_right = right;
         self.margin_bottom = bottom;
@@ -139,42 +151,42 @@ impl<'a> Chart<'a> {
     }
 
     /// Return the offset from the left where the view starts.
-    pub fn get_view_horizontal_start_offset(&self) -> usize {
+    pub fn get_view_horizontal_start_offset(&self) -> isize {
         self.margin_left
     }
 
     /// Return the offset from the left where the view ends.
-    pub fn get_view_horizontal_end_offset(&self) -> usize {
+    pub fn get_view_horizontal_end_offset(&self) -> isize {
         self.width - self.margin_right
     }
 
     /// Return the offset from the left where the view starts.
-    pub fn get_view_vertical_start_offset(&self) -> usize {
+    pub fn get_view_vertical_start_offset(&self) -> isize {
         self.margin_top
     }
 
     /// Return the offset from the left where the view ends.
-    pub fn get_view_vertical_end_offset(&self) -> usize {
+    pub fn get_view_vertical_end_offset(&self) -> isize {
         self.width - self.margin_bottom
     }
 
     /// Return the width of the view.
-    pub fn get_view_width(&self) -> usize {
+    pub fn get_view_width(&self) -> isize {
         self.width - self.margin_left - self.margin_right
     }
 
     /// Return the width of the chart.
-    pub fn get_chart_width(&self) -> usize {
+    pub fn get_chart_width(&self) -> isize {
         self.width
     }
 
     /// Return the height of the chart.
-    pub fn get_chart_height(&self) -> usize {
+    pub fn get_chart_height(&self) -> isize {
         self.height
     }
 
     /// Return the height of the view.
-    pub fn get_view_height(&self) -> usize {
+    pub fn get_view_height(&self) -> isize {
         self.height - self.margin_top - self.margin_bottom
     }
 
