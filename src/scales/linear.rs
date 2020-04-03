@@ -6,7 +6,7 @@ use crate::scales::{Scale, ScaleType};
 #[derive(Debug)]
 pub struct ScaleLinear {
     /// The domain limits of the dataset that the scale is going to represent.
-    domain: Vec<f32>,
+    domain: Vec<isize>,
     /// The range limits of the drawable area on the chart.
     range: Range,
     /// The amount of ticks to display.
@@ -24,13 +24,13 @@ impl ScaleLinear {
     }
 
     /// Set the domain limits for the scale band.
-    pub fn set_domain(mut self, range: Vec<f32>) -> Self {
+    pub fn set_domain(mut self, range: Vec<isize>) -> Self {
         self.domain = range;
         self
     }
 
     /// Get the domain limits of the scale.
-    pub fn domain(&self) -> &Vec<f32> {
+    pub fn domain(&self) -> &Vec<isize> {
         &self.domain
     }
 
@@ -46,13 +46,13 @@ impl ScaleLinear {
     }
 
     /// Takes a value x in [a, b] and returns the corresponding value in [0, 1].
-    fn normalize(&self, a: f32, b: f32, x: f32) -> f32 {
+    fn normalize(&self, a: isize, b: isize, x: f32) -> f32 {
         // If a == b then return 0.5
         if a == b {
             0.5
         } else {
             let b = b - a;
-            (x - a) / b
+            (x - a as f32) / b as f32
         }
     }
 
@@ -125,23 +125,23 @@ impl Scale<f32> for ScaleLinear {
         let mut ticks = Vec::new();
 
         if self.domain[0] == self.domain[1] && self.tick_count > 0 {
-            ticks.push(self.domain[0]);
+            ticks.push(self.domain[0] as f32);
             return ticks;
         }
 
-        let step = self.tick_step(self.domain[0], self.domain[1]);
+        let step = self.tick_step(self.domain[0] as f32, self.domain[1] as f32);
         let mut i = 0;
         if step > 0_f32 {
-            let start = (self.domain[0] / step).ceil();
-            let stop = (self.domain[1] / step).floor();
+            let start = (self.domain[0] as f32 / step).ceil();
+            let stop = (self.domain[1] as f32 / step).floor();
             let nr_of_ticks = (stop - start + 1_f32).ceil() as i32;
             while i < nr_of_ticks {
                 ticks.push((start + i as f32) * step);
                 i += 1;
             }
         } else {
-            let start = (self.domain[0] * step).floor();
-            let stop = (self.domain[1] * step).ceil();
+            let start = (self.domain[0] as f32 * step).floor();
+            let stop = (self.domain[1] as f32 * step).ceil();
             let nr_of_ticks = (start - stop + 1_f32).ceil() as i32;
             while i < nr_of_ticks {
                 ticks.push((start - i as f32) / step);
