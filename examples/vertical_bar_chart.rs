@@ -10,7 +10,9 @@ fn main() {
     // range (the width of the chart without the margins).
     let x = ScaleBand::new()
         .set_domain(vec![String::from("A"), String::from("B"), String::from("C")])
-        .set_range(vec![0, width - left - right]);
+        .set_range(vec![0, width - left - right])
+        .set_inner_padding(0.1)
+        .set_outer_padding(0.1);
 
     // Create a linear scale that will interpolate values in [0, 100] range to corresponding
     // values in [availableHeight, 0] range (the height of the chart without the margins).
