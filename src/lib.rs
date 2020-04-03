@@ -25,7 +25,6 @@
 mod chart;
 // mod view;
 mod scales;
-pub mod utils;
 mod views;
 mod components;
 mod colors;

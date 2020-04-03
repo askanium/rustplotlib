@@ -2,7 +2,6 @@ use svg::parser::Error;
 use svg::node::element::{Group, Circle, Rectangle, Line};
 use svg::node::Node;
 use crate::components::DatumRepresentation;
-use std::cmp::Ordering::Greater;
 
 /// Define the possible types of points in a scatter plot.
 #[derive(Debug, Copy, Clone)]

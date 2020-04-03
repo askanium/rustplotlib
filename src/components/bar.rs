@@ -5,7 +5,7 @@ use svg::node::element::Rectangle;
 use svg::node::Text as TextNode;
 use svg::node::element::Text;
 use crate::components::DatumRepresentation;
-use crate::utils::Orientation;
+use crate::chart::Orientation;
 
 /// Set the position of a bar's label.
 #[derive(Copy, Clone, Debug)]

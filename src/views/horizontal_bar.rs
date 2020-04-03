@@ -8,7 +8,7 @@ use crate::{Scale, BarDatum};
 use crate::scales::ScaleType;
 use crate::components::DatumRepresentation;
 use crate::views::View;
-use crate::utils::Orientation;
+use crate::chart::Orientation;
 
 /// A View that represents data as horizontal bars.
 pub struct HorizontalBarView<'a> {

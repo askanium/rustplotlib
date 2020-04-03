@@ -10,6 +10,13 @@ use svg::node::element::Text;
 use crate::{Axis, Scale};
 use crate::views::View;
 
+/// Define the orientation enum to aid in rendering and business logic.
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub enum Orientation {
+    Horizontal,
+    Vertical,
+}
+
 /// The Chart struct definition.
 /// A Chart is the smallest entity that can be saved (the bigger one is a Page (TBD)).
 pub struct Chart<'a> {
