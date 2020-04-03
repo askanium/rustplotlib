@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use svg::parser::Error;
 use svg::node::Node;
 use svg::node::element::Group;
-use crate::components::scatter::{ScatterPoint, PointType};
+use crate::components::scatter::{ScatterPoint, MarkerType};
 use crate::colors::Color;
 use crate::Scale;
 use crate::views::datum::PointDatum;
@@ -12,6 +12,7 @@ use crate::components::DatumRepresentation;
 /// A View that represents data as a scatter plot.
 pub struct ScatterView<'a, T, U> {
     labels_visible: bool,
+    marker_type: MarkerType,
     entries: Vec<ScatterPoint>,
     colors: Vec<Color>,
     keys: Vec<String>,
@@ -25,6 +26,7 @@ impl<'a, T, U> ScatterView<'a, T, U> {
     pub fn new() -> Self {
         Self {
             labels_visible: true,
+            marker_type: MarkerType::Circle,
             entries: Vec::new(),
             keys: Vec::new(),
             colors: Color::color_scheme_10(),
@@ -51,6 +53,13 @@ impl<'a, T, U> ScatterView<'a, T, U> {
         self.keys = keys;
         self
     }
+
+    /// Set the keys in case of a stacked bar chart.
+    pub fn set_marker_type(mut self, marker_type: MarkerType) -> Self {
+        self.marker_type = marker_type;
+        self
+    }
+
     /// Hide labels on the chart.
     pub fn do_not_show_labels(mut self) -> Self {
         self.labels_visible = false;
@@ -97,7 +106,7 @@ impl<'a, T, U> ScatterView<'a, T, U> {
                     self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
                 }
             };
-            self.entries.push(ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, PointType::Circle, 5, self.color_map.get(&datum.get_key()).unwrap().clone()));
+            self.entries.push(ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, self.color_map.get(&datum.get_key()).unwrap().clone()));
         }
 
         Ok(self)
