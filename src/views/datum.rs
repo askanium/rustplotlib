@@ -154,13 +154,13 @@ impl BarDatum for (&str, i32, &str) {
     }
 }
 
-impl<T, U> PointDatum<T, U> for (T, U) where T: Clone, U: Clone {
-    fn get_x(&self) -> T {
-        self.0.clone()
+impl PointDatum<f32, f32> for (f32, f32) {
+    fn get_x(&self) -> f32 {
+        self.0
     }
 
-    fn get_y(&self) -> U {
-        self.1.clone()
+    fn get_y(&self) -> f32 {
+        self.1
     }
 
     fn get_key(&self) -> String {
@@ -168,13 +168,55 @@ impl<T, U> PointDatum<T, U> for (T, U) where T: Clone, U: Clone {
     }
 }
 
-impl<T, U> PointDatum<T, U> for (T, U, String) where T: Clone, U: Clone {
-    fn get_x(&self) -> T {
-        self.0.clone()
+impl PointDatum<f32, f32> for (isize, isize) {
+    fn get_x(&self) -> f32 {
+        self.0 as f32
     }
 
-    fn get_y(&self) -> U {
-        self.1.clone()
+    fn get_y(&self) -> f32 {
+        self.1 as f32
+    }
+
+    fn get_key(&self) -> String {
+        String::new()
+    }
+}
+
+impl PointDatum<f32, f32> for (isize, isize, &str) {
+    fn get_x(&self) -> f32 {
+        self.0 as f32
+    }
+
+    fn get_y(&self) -> f32 {
+        self.1 as f32
+    }
+
+    fn get_key(&self) -> String {
+        String::from(self.2)
+    }
+}
+
+impl PointDatum<f32, f32> for (f32, f32, &str) {
+    fn get_x(&self) -> f32 {
+        self.0
+    }
+
+    fn get_y(&self) -> f32 {
+        self.1
+    }
+
+    fn get_key(&self) -> String {
+        String::from(self.2)
+    }
+}
+
+impl PointDatum<f32, f32> for (isize, isize, String) {
+    fn get_x(&self) -> f32 {
+        self.0 as f32
+    }
+
+    fn get_y(&self) -> f32 {
+        self.1 as f32
     }
 
     fn get_key(&self) -> String {
@@ -182,16 +224,16 @@ impl<T, U> PointDatum<T, U> for (T, U, String) where T: Clone, U: Clone {
     }
 }
 
-impl<T, U> PointDatum<T, U> for (T, U, &str) where T: Clone, U: Clone {
-    fn get_x(&self) -> T {
-        self.0.clone()
+impl PointDatum<f32, f32> for (f32, f32, String) {
+    fn get_x(&self) -> f32 {
+        self.0
     }
 
-    fn get_y(&self) -> U {
-        self.1.clone()
+    fn get_y(&self) -> f32 {
+        self.1
     }
 
     fn get_key(&self) -> String {
-        String::from(self.2)
+        self.2.clone()
     }
 }
