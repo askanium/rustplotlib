@@ -195,10 +195,10 @@ Custom X Axis Label
 (170, 14)
 </text>
 </g>
-<g class="scatter-point" transform="translate(630,400.2)">
+<g class="scatter-point" transform="translate(665,400.2)">
 <rect fill="#aa0000" height="10" width="10" x="-5" y="-5"/>
 <text dy=".35em" fill="#333" font-family="sans-serif" font-size="14px" text-anchor="middle" x="0" y="-17">
-(180, 13)
+(190, 13)
 </text>
 </g>
 </g>
