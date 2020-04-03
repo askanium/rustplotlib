@@ -68,8 +68,8 @@ impl<'a> VerticalBarView<'a> {
     }
 
     /// Hide labels on the chart.
-    pub fn do_not_show_labels(mut self) -> Self {
-        self.labels_visible = false;
+    pub fn set_label_visibility(mut self, label_visibility: bool) -> Self {
+        self.labels_visible = label_visibility;
         self
     }
 
