@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use crate::utils::Range;
 use crate::scales::{Scale, ScaleType};
 
 /// The scale to represent categorical data.
@@ -8,7 +7,7 @@ pub struct ScaleBand {
     /// The domain limits of the dataset that the scale is going to represent.
     domain: Vec<String>,
     /// The range limits of the drawable area on the chart.
-    range: Range,
+    range: Vec<isize>,
     /// The offsets of each entry from domain.
     offsets: Vec<f32>,
     /// The hash map that maps domain keys with corresponding offset entries.
@@ -36,7 +35,7 @@ impl ScaleBand {
     pub fn new() -> Self {
         Self {
             domain: Vec::new(),
-            range: Range::default(),
+            range: vec![0, 1],
             offsets: Vec::new(),
             index: HashMap::new(),
             step: 1f32,
@@ -76,28 +75,29 @@ impl ScaleBand {
     }
 
     /// Set the range limits for the scale band.
-    pub fn set_range(mut self, range: Range) -> Self {
+    pub fn set_range(mut self, range: Vec<isize>) -> Self {
         self.range = range;
         self.rescale();
         self
     }
 
     /// Get the range limits of the scale.
-    pub fn range(&self) -> &Range {
+    pub fn range(&self) -> &Vec<isize> {
         &self.range
     }
 
     fn rescale(&mut self) {
         let n = self.domain.len();
-        let Range(r0, r1) = self.range;
+        let r0 = self.range[0];
+        let r1 = self.range[1];
         let reverse = r1 < r0;
-        let mut start = r0;
-        let mut stop = r1;
+        let mut start = r0 as f32;
+        let mut stop = r1 as f32;
 
         if reverse {
-            self.range = Range(r1, r0);
-            start = r1;
-            stop = r0;
+            self.range = vec![r1, r0];
+            start = r1 as f32;
+            stop = r0 as f32;
         }
 
         let step_denominator = {
@@ -158,12 +158,12 @@ impl Scale<String> for ScaleBand {
 
     /// Get the start range value.
     fn range_start(&self) -> f32 {
-        self.range.0
+        self.range[0] as f32
     }
 
     /// Get the end range value.
     fn range_end(&self) -> f32 {
-        self.range.1
+        self.range[1] as f32
     }
 
     /// Get the list of ticks that represent the scale on a chart axis.

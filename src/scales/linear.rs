@@ -1,5 +1,4 @@
 use std::cmp::{max, Ordering};
-use crate::utils::Range;
 use crate::scales::{Scale, ScaleType};
 
 /// The scale to represent categorical data.
@@ -8,7 +7,7 @@ pub struct ScaleLinear {
     /// The domain limits of the dataset that the scale is going to represent.
     domain: Vec<isize>,
     /// The range limits of the drawable area on the chart.
-    range: Range,
+    range: Vec<isize>,
     /// The amount of ticks to display.
     tick_count: usize,
 }
@@ -18,7 +17,7 @@ impl ScaleLinear {
     pub fn new() -> Self {
         Self {
             domain: Vec::new(),
-            range: Range::default(),
+            range: vec![0, 1],
             tick_count: 10,
         }
     }
@@ -35,13 +34,13 @@ impl ScaleLinear {
     }
 
     /// Set the range limits for the scale band.
-    pub fn set_range(mut self, range: Range) -> Self {
+    pub fn set_range(mut self, range: Vec<isize>) -> Self {
         self.range = range;
         self
     }
 
     /// Get the range limits of the scale.
-    pub fn range(&self) -> &Range {
+    pub fn range(&self) -> &Vec<isize> {
         &self.range
     }
 
@@ -99,7 +98,8 @@ impl Scale<f32> for ScaleLinear {
         let a = self.domain[0];
         let b = self.domain[1];
         let normalized = self.normalize(a, b, *domain);
-        let Range(a, b) = self.range;
+        let a = self.range[0] as f32;
+        let b = self.range[1] as f32;
         let scaled = self.interpolate(a, b, normalized);
 
         scaled
@@ -112,12 +112,12 @@ impl Scale<f32> for ScaleLinear {
 
     /// Get the start range value.
     fn range_start(&self) -> f32 {
-        self.range.0
+        self.range[0] as f32
     }
 
     /// Get the end range value.
     fn range_end(&self) -> f32 {
-        self.range.1
+        self.range[1] as f32
     }
 
     /// Get the list of ticks that represent the scale on a chart axis.
