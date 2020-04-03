@@ -67,7 +67,7 @@ impl<'a> HorizontalBarView<'a> {
         self
     }
 
-    /// Hide labels on the chart.
+    /// Set labels visibility.
     pub fn set_label_visibility(mut self, label_visibility: bool) -> Self {
         self.labels_visible = label_visibility;
         self

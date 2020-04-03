@@ -40,7 +40,7 @@ pub use crate::views::scatter::ScatterView;
 pub use crate::views::datum::BarDatum;
 pub use crate::axis::Axis;
 pub use crate::components::bar::BarLabelPosition;
-pub use crate::components::scatter::MarkerType;
+pub use crate::components::scatter::{MarkerType, PointLabelPosition};
 pub use crate::colors::Color;
 
 #[cfg(test)]
