@@ -60,11 +60,11 @@ impl<'a, T, U> ScatterView<'a, T, U> {
     /// Load and process a dataset of BarDatum points.
     pub fn load_data(mut self, data: &Vec<impl PointDatum<T, U>>) -> Result<Self, String> {
         match self.x_scale {
-            Some(scale) => {},
+            Some(_) => {},
             _ => return Err("Please provide a scale for the X dimension before loading data".to_string()),
         }
         match self.y_scale {
-            Some(scale) => {},
+            Some(_) => {},
             _ => return Err("Please provide a scale for the Y dimension before loading data".to_string()),
         }
 

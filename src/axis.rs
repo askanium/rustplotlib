@@ -30,7 +30,7 @@ impl Axis {
     /// Create a new instance of an axis for a chart based on the provided scale and position.
     fn new<'a, T: ToString>(scale: &'a dyn Scale<T>, position: AxisPosition, chart: &Chart<'a>) -> Self {
         Self {
-            ticks: Self::generate_ticks(scale, position, chart),
+            ticks: Self::generate_ticks(scale, position),
             position,
             axis_line: Self::get_axis_line(position, chart),
             label: String::new(),
@@ -112,7 +112,7 @@ impl Axis {
     }
 
     /// Generate ticks for the axis based on the scale and position.
-    fn generate_ticks<'a, T: ToString>(scale: &'a dyn Scale<T>, position: AxisPosition, chart: &Chart<'a>) -> Vec<AxisTick> {
+    fn generate_ticks<'a, T: ToString>(scale: &'a dyn Scale<T>, position: AxisPosition) -> Vec<AxisTick> {
         let mut ticks = Vec::new();
         let label_offset = {
             if position == AxisPosition::Top || position == AxisPosition::Bottom {
