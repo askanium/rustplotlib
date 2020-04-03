@@ -103,6 +103,7 @@ impl<T: Display, U: Display> DatumRepresentation for ScatterPoint<T, U> {
                                 .set("y1", -(self.marker_size as i32))
                                 .set("x2", self.marker_size)
                                 .set("y2", self.marker_size)
+                                .set("stroke-width", "2px")
                                 .set("stroke", self.color.as_ref())
                         )
                         .add(
@@ -111,6 +112,7 @@ impl<T: Display, U: Display> DatumRepresentation for ScatterPoint<T, U> {
                                 .set("y1", -(self.marker_size as i32))
                                 .set("x2", -(self.marker_size as i32))
                                 .set("y2", self.marker_size)
+                                .set("stroke-width", "2px")
                                 .set("stroke", self.color.as_ref())
                         )
                 );
