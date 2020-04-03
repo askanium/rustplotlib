@@ -23,7 +23,7 @@ fn main() {
 
     // You can use your own iterable as data as long as its items implement the `PointDatum` trait.
     let scatter_data_1 = vec![(20, 90), (12, 54), (25, 70), (33, 40)];
-    let scatter_data_2 = vec![(120, 10), (143, 34), (170, 14), (180, 13)];
+    let scatter_data_2 = vec![(120, 10), (143, 34), (170, 14), (190, 13)];
 
     // Create Scatter view that is going to represent the data as points.
     let scatter_view_1 = ScatterView::new()
