@@ -111,19 +111,21 @@ impl<'a> VerticalBarView<'a> {
         let y_range_is_reversed = self.y_scale.unwrap().is_range_reversed();
 
         for (category, key_value_pairs) in categories.iter_mut() {
+            let mut value_acc = 0_f32;
             let mut bar_blocks = Vec::new();
-            let mut stacked_start = self.y_scale.unwrap().scale(&0_f32);
+            let mut stacked_start = self.y_scale.unwrap().scale(&value_acc);
             let mut stacked_end = stacked_start;
 
             for (key, value) in key_value_pairs.iter() {
+                value_acc += *value;
                 // If Y axis' scale has the range in reversed order, then adjust the computation of
                 // the start and end positions to account for SVG coordinate system origin.
                 if y_range_is_reversed {
                     stacked_end = stacked_start;
-                    stacked_start = self.y_scale.unwrap().scale(value);
+                    stacked_start = self.y_scale.unwrap().scale(&value_acc);
                 } else {
                     stacked_start = stacked_end;
-                    stacked_end = self.y_scale.unwrap().scale(value);
+                    stacked_end = self.y_scale.unwrap().scale(&value_acc);
                 }
                 bar_blocks.push(BarBlock::new(stacked_start, stacked_end, *value, self.color_map.get(*key).unwrap().clone()));
             }
