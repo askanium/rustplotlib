@@ -61,6 +61,12 @@ impl<'a> HorizontalBarView<'a> {
         self
     }
 
+    /// Set the color palette of the view.
+    pub fn set_colors(mut self, colors: Vec<Color>) -> Self {
+        self.colors = colors;
+        self
+    }
+
     /// Hide labels on the chart.
     pub fn do_not_show_labels(mut self) -> Self {
         self.labels_visible = false;
