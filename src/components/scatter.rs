@@ -65,6 +65,16 @@ impl<T: Display, U: Display> ScatterPoint<T, U> {
             color,
         }
     }
+
+    /// Return the x coordinate of the point.
+    pub fn get_x(&self) -> f32 {
+        self.x
+    }
+
+    /// Return the y coordinate of the point.
+    pub fn get_y(&self) -> f32 {
+        self.y
+    }
 }
 
 impl<T: Display, U: Display> DatumRepresentation for ScatterPoint<T, U> {
