@@ -20,6 +20,7 @@ pub struct HorizontalBarView<'a> {
     color_map: HashMap<String, String>,
     x_scale: Option<&'a dyn Scale<f32>>,
     y_scale: Option<&'a dyn Scale<String>>,
+    custom_data_label: String,
 }
 
 impl<'a> HorizontalBarView<'a> {
@@ -34,6 +35,7 @@ impl<'a> HorizontalBarView<'a> {
             color_map: HashMap::new(),
             x_scale: None,
             y_scale: None,
+            custom_data_label: String::new(),
         }
     }
 
@@ -70,6 +72,15 @@ impl<'a> HorizontalBarView<'a> {
     /// Set labels visibility.
     pub fn set_label_visibility(mut self, label_visibility: bool) -> Self {
         self.labels_visible = label_visibility;
+        self
+    }
+
+    /// Set custom label for the dataset.
+    /// This will work when the dataset represents only a single
+    /// type of data (i.e. there are no different "keys" by which to
+    /// differentiate data), otherwise, this will have no effect.
+    pub fn set_custom_data_label(mut self, label: String) -> Self {
+        self.custom_data_label = label;
         self
     }
 
@@ -185,8 +196,15 @@ impl<'a> View<'a> for HorizontalBarView<'a> {
     fn get_legend_entries(&self) -> Vec<LegendEntry> {
         let mut entries = Vec::new();
 
-        for key in self.keys.iter() {
-            entries.push(LegendEntry::new(LegendMarkerType::Square, self.color_map.get(key).unwrap().clone(), String::from("none"), key.clone()));
+        // If there is a single key and it is an empty string (meaning
+        // the dataset consists only of X and Y dimension values), return
+        // the custom data label.
+        if self.keys.len() == 1 && self.keys[0].len() == 0 {
+            entries.push(LegendEntry::new(LegendMarkerType::Square, self.color_map.get(&self.keys[0]).unwrap().clone(), String::from("none"), self.custom_data_label.clone()));
+        } else {
+            for key in self.keys.iter() {
+                entries.push(LegendEntry::new(LegendMarkerType::Square, self.color_map.get(key).unwrap().clone(), String::from("none"), key.clone()));
+            }
         }
 
         entries

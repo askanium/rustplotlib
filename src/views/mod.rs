@@ -6,6 +6,7 @@ pub mod horizontal_bar;
 pub mod scatter;
 pub mod datum;
 pub mod line;
+pub mod area;
 
 /// A trait that defines a View of a dataset that can be rendered within a chart.
 pub trait View<'a> {
