@@ -2,13 +2,15 @@ use std::string::ToString;
 use std::ffi::OsStr;
 use std::path::Path;
 use svg;
-use svg::parser::Error;
 use svg::node::element::Group;
 use svg::Node;
 use svg::node::Text as TextNode;
 use svg::node::element::Text;
 use crate::{Axis, Scale};
 use crate::views::View;
+use crate::axis::AxisPosition;
+use crate::legend::Legend;
+use crate::components::legend::LegendEntry;
 
 /// Define the orientation enum to aid in rendering and business logic.
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -30,6 +32,7 @@ pub struct Chart<'a> {
     x_axis_bottom: Option<Axis>,
     y_axis_left: Option<Axis>,
     y_axis_right: Option<Axis>,
+    legend_position: Option<AxisPosition>,
     views: Vec<&'a dyn View<'a>>,
     title: String,
 }
@@ -48,6 +51,7 @@ impl<'a> Chart<'a> {
             x_axis_bottom: None,
             y_axis_left: None,
             y_axis_right: None,
+            legend_position: None,
             views: Vec::new(),
             title: String::new(),
         }
@@ -190,8 +194,14 @@ impl<'a> Chart<'a> {
         self.height - self.margin_top - self.margin_bottom
     }
 
+    /// Set legend position at the specified side of the chart.
+    pub fn draw_legend_at(mut self, position: AxisPosition) -> Self {
+        self.legend_position = Some(position);
+        self
+    }
+
     /// Generate the SVG for the chart and its components.
-    fn to_svg(&self) -> Result<Group, Error> {
+    fn to_svg(&self) -> Result<Group, String> {
         let mut group = Group::new()
             .set("class", "g-chart");
 
@@ -199,7 +209,7 @@ impl<'a> Chart<'a> {
         if self.title.len() > 0 {
             let title_group = Group::new()
                 .set("class", "g-title")
-                .set("transform", format!("translate({},{})", self.width / 2, 40))
+                .set("transform", format!("translate({},{})", self.width / 2, 25))
                 .add(Text::new()
                     .set("x", 0)
                     .set("y", 0)
@@ -245,6 +255,87 @@ impl<'a> Chart<'a> {
             view_group.append(view.to_svg()?);
         }
         group.append(view_group);
+
+        if let Some(legend_position) = self.legend_position {
+            let width;
+            let x_offset;
+            let y_offset;
+
+            match legend_position {
+                AxisPosition::Top => {
+                    let axis_height = {
+                        if self.title.len() > 0 {
+                            45
+                        } else {
+                            10
+                        }
+                    };
+                    width = self.width - self.margin_right - self.margin_left;
+                    x_offset = self.margin_left;
+                    y_offset = axis_height;
+                },
+                AxisPosition::Bottom => {
+                    // Compute the height of the bottom axis that should serve
+                    // as an offset for the legend.
+                    // These sizes are hardcoded and work with current hardcoded axis fonts.
+                    // When a necessity will arise to have custom axis font sizes,
+                    // these will have to be dynamically computed.
+                    let axis_height = {
+                        if let Some(ref axis) = self.x_axis_bottom {
+                            if axis.has_label() {
+                                52
+                            } else {
+                                36
+                            }
+                        } else {
+                            16
+                        }
+                    };
+                    width = self.width - self.margin_right - self.margin_left;
+                    x_offset = self.margin_left;
+                    y_offset = self.height - self.margin_bottom + axis_height;
+                },
+                AxisPosition::Left => {
+                    let axis_width = {
+                        if let Some(ref axis) = self.y_axis_left {
+                            if axis.has_label() {
+                                68
+                            } else {
+                                50
+                            }
+                        } else {
+                            20
+                        }
+                    };
+                    width = self.margin_left - axis_width - 10; // 10 is described in the comment below
+                    x_offset = 10; // always have a 10px padding from the left of the chart
+                    y_offset = self.margin_top;
+                },
+                AxisPosition::Right => {
+                    let axis_width = {
+                        if let Some(ref axis) = self.y_axis_right {
+                            if axis.has_label() {
+                                68
+                            } else {
+                                50
+                            }
+                        } else {
+                            20
+                        }
+                    };
+                    width = self.margin_right - axis_width;
+                    x_offset = self.width - self.margin_right + axis_width;
+                    y_offset = self.margin_top;
+                }
+            };
+
+            let legend_entries = self.views.iter().map(|view| view.get_legend_entries()).flatten().collect::<Vec<LegendEntry>>();
+            let legend = Legend::new(legend_entries, width as usize);
+            let mut legend_group = legend.to_svg()?;
+            legend_group.assign("transform", format!("translate({},{})", x_offset, y_offset));
+
+            group.append(legend_group);
+        }
 
         Ok(group)
     }

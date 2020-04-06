@@ -63,6 +63,11 @@ impl Axis {
         self.label = label;
     }
 
+    /// Return whether the axis has a label or not.
+    pub fn has_label(&self) -> bool {
+        self.label.len() > 0
+    }
+
     /// Compute the length of the axis.
     fn get_axis_length<'a>(position: AxisPosition, chart: &Chart<'a>) -> isize {
         if position == AxisPosition::Top || position == AxisPosition::Bottom {

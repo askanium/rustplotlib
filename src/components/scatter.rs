@@ -1,5 +1,4 @@
 use std::fmt::Display;
-use svg::parser::Error;
 use svg::node::element::{Group, Circle, Rectangle, Line};
 use svg::node::Node;
 use svg::node::Text as TextNode;
@@ -79,7 +78,7 @@ impl<T: Display, U: Display> ScatterPoint<T, U> {
 
 impl<T: Display, U: Display> DatumRepresentation for ScatterPoint<T, U> {
 
-    fn to_svg(&self) -> Result<Group, Error> {
+    fn to_svg(&self) -> Result<Group, String> {
         let mut group = Group::new()
             .set("transform", format!("translate({},{})", self.x, self.y))
             .set("class", "scatter-point");

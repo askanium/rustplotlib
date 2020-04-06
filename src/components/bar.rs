@@ -1,4 +1,3 @@
-use svg::parser::Error;
 use svg::node::Node;
 use svg::node::element::Group;
 use svg::node::element::Rectangle;
@@ -56,7 +55,7 @@ impl Bar {
 
 impl DatumRepresentation for Bar {
 
-    fn to_svg(&self) -> Result<Group, Error> {
+    fn to_svg(&self) -> Result<Group, String> {
         let (bar_group_offset_x, bar_group_offset_y) = {
             match self.orientation {
                 Orientation::Vertical => (self.offset, 0_f32),

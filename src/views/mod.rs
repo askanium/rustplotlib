@@ -1,5 +1,5 @@
 use svg::node::element::Group;
-use svg::parser::Error;
+use crate::components::legend::LegendEntry;
 
 pub mod vertical_bar;
 pub mod horizontal_bar;
@@ -9,5 +9,7 @@ pub mod line;
 
 /// A trait that defines a View of a dataset that can be rendered within a chart.
 pub trait View<'a> {
-    fn to_svg(&self) -> Result<Group, Error>;
+    fn to_svg(&self) -> Result<Group, String>;
+
+    fn get_legend_entries(&self) -> Vec<LegendEntry>;
 }

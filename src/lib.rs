@@ -29,6 +29,7 @@ mod views;
 mod components;
 mod colors;
 mod axis;
+mod legend;
 
 pub use crate::chart::Chart;
 pub use crate::scales::band::ScaleBand;
@@ -39,7 +40,7 @@ pub use crate::views::horizontal_bar::HorizontalBarView;
 pub use crate::views::scatter::ScatterView;
 pub use crate::views::line::LineSeriesView;
 pub use crate::views::datum::{BarDatum, PointDatum};
-pub use crate::axis::Axis;
+pub use crate::axis::{Axis, AxisPosition};
 pub use crate::components::bar::BarLabelPosition;
 pub use crate::components::line::LineSeries;
 pub use crate::components::scatter::{MarkerType, PointLabelPosition};

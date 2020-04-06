@@ -1,5 +1,4 @@
 use std::fmt::Display;
-use svg::parser::Error;
 use svg::node::element::{Group, Path};
 use svg::node::element::path::Data;
 use svg::node::Node;
@@ -27,7 +26,7 @@ impl<T: Display, U: Display> LineSeries<T, U> {
 
 impl<T: Display, U: Display> DatumRepresentation for LineSeries<T, U> {
 
-    fn to_svg(&self) -> Result<Group, Error> {
+    fn to_svg(&self) -> Result<Group, String> {
         let mut group = Group::new()
             .set("class", "line");
 

@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use svg::parser::Error;
+use std::fmt::Display;
 use svg::node::Node;
 use svg::node::element::Group;
 use crate::components::scatter::{ScatterPoint, MarkerType, PointLabelPosition};
@@ -8,7 +8,7 @@ use crate::{Scale, LineSeries};
 use crate::views::datum::PointDatum;
 use crate::views::View;
 use crate::components::DatumRepresentation;
-use std::fmt::Display;
+use crate::components::legend::{LegendEntry, LegendMarkerType};
 
 /// A View that represents data as a scatter plot.
 pub struct LineSeriesView<'a, T: Display, U: Display> {
@@ -151,7 +151,7 @@ impl<'a, T: Display, U: Display> LineSeriesView<'a, T, U> {
 
 impl<'a, T: Display, U: Display> View<'a> for LineSeriesView<'a, T, U> {
     /// Generate the SVG representation of the view.
-    fn to_svg(&self) -> Result<Group, Error> {
+    fn to_svg(&self) -> Result<Group, String> {
         let mut group = Group::new();
 
         for entry in self.entries.iter() {
@@ -160,5 +160,16 @@ impl<'a, T: Display, U: Display> View<'a> for LineSeriesView<'a, T, U> {
         }
 
         Ok(group)
+    }
+
+    /// Return the legend entries that this view represents.
+    fn get_legend_entries(&self) -> Vec<LegendEntry> {
+        let mut entries = Vec::new();
+
+        for key in self.keys.iter() {
+            entries.push(LegendEntry::new(LegendMarkerType::Line, self.color_map.get(key).unwrap().clone(), String::from("none"), key.clone()));
+        }
+
+        entries
     }
 }
