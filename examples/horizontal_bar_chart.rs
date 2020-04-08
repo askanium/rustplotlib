@@ -9,7 +9,7 @@ fn main() {
     // Create a linear scale that will interpolate values in [0, 100] range to corresponding
     // values in [0, availableWidth] range (the width of the chart without the margins).
     let x = ScaleLinear::new()
-        .set_domain(vec![0, 100])
+        .set_domain(vec![0_f32, 100_f32])
         .set_range(vec![0, width - left - right]);
 
     // Create a band scale that maps ["A", "B", "C"] categories to values in the [0, availableHeight]

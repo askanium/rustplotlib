@@ -9,7 +9,7 @@ fn main() {
     // Create a band scale that will interpolate values in [0, 200] to values in the
     // [0, availableWidth] range (the width of the chart without the margins).
     let x = ScaleLinear::new()
-        .set_domain(vec![0, 200])
+        .set_domain(vec![0_f32, 200_f32])
         .set_range(vec![0, width - left - right]);
 
     // Create a linear scale that will interpolate values in [0, 100] range to corresponding
@@ -18,7 +18,7 @@ fn main() {
     // in top left corner, while chart's origin is in bottom left corner, hence we need to invert
     // the range on Y axis for the chart to display as though its origin is at bottom left.
     let y = ScaleLinear::new()
-        .set_domain(vec![0, 100])
+        .set_domain(vec![0_f32, 100_f32])
         .set_range(vec![height - top - bottom, 0]);
 
     // You can use your own iterable as data as long as its items implement the `PointDatum` trait.

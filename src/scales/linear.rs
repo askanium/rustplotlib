@@ -5,7 +5,7 @@ use crate::scales::{Scale, ScaleType};
 #[derive(Debug)]
 pub struct ScaleLinear {
     /// The domain limits of the dataset that the scale is going to represent.
-    domain: Vec<isize>,
+    domain: Vec<f32>,
     /// The range limits of the drawable area on the chart.
     range: Vec<isize>,
     /// The amount of ticks to display.
@@ -23,13 +23,13 @@ impl ScaleLinear {
     }
 
     /// Set the domain limits for the scale band.
-    pub fn set_domain(mut self, range: Vec<isize>) -> Self {
+    pub fn set_domain(mut self, range: Vec<f32>) -> Self {
         self.domain = range;
         self
     }
 
     /// Get the domain limits of the scale.
-    pub fn domain(&self) -> &Vec<isize> {
+    pub fn domain(&self) -> &Vec<f32> {
         &self.domain
     }
 
@@ -45,7 +45,7 @@ impl ScaleLinear {
     }
 
     /// Takes a value x in [a, b] and returns the corresponding value in [0, 1].
-    fn normalize(&self, a: isize, b: isize, x: f32) -> f32 {
+    fn normalize(&self, a: f32, b: f32, x: f32) -> f32 {
         // If a == b then return 0.5
         if a == b {
             0.5

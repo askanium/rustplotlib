@@ -18,7 +18,7 @@ fn main() {
     // in the top left corner, while chart's origin is in bottom left corner, hence we need to
     // invert the range on Y axis for the chart to display as though its origin is at bottom left.
     let y = ScaleLinear::new()
-        .set_domain(vec![0, 100])
+        .set_domain(vec![0_f32, 100_f32])
         .set_range(vec![height - top - bottom, 0]);
 
     // You can use your own iterable as data as long as its items implement the `BarDatum` trait.
