@@ -33,6 +33,7 @@ pub struct Bar {
     blocks: Vec<BarBlock>,
     orientation: Orientation,
     label_position: BarLabelPosition,
+    rounding_precision: Option<usize>,
     label_visible: bool,
     category: String,
     bar_width: f32,
@@ -40,11 +41,21 @@ pub struct Bar {
 }
 
 impl Bar {
-    pub fn new(blocks: Vec<BarBlock>, orientation: Orientation, category: String, label_position: BarLabelPosition, label_visible: bool, bar_width: f32, offset: f32) -> Self {
+    pub fn new(
+        blocks: Vec<BarBlock>,
+        orientation: Orientation,
+        category: String,
+        label_position: BarLabelPosition,
+        label_visible: bool,
+        rounding_precision: Option<usize>,
+        bar_width: f32,
+        offset: f32
+    ) -> Self {
         Self {
             blocks,
             orientation,
             label_position,
+            rounding_precision,
             label_visible,
             category,
             bar_width,
@@ -99,6 +110,11 @@ impl DatumRepresentation for Bar {
                     _ => (0_f32, "middle"), // this is needed to get rid of compiler warning of exhaustively covering match pattern.
                 };
 
+                let label_text = match &self.rounding_precision {
+                    None => block.2.to_string(),
+                    Some(nr_of_digits) => format!("{:.1$}", block.2.to_string().parse::<f32>().unwrap(), nr_of_digits)
+                };
+
                 let label = Text::new()
                     .set(x_attr, label_x_attr_value)
                     .set(y_attr, self.bar_width / 2_f32)
@@ -107,7 +123,7 @@ impl DatumRepresentation for Bar {
                     .set("font-family", "sans-serif")
                     .set("fill", "#333")
                     .set("font-size", "14px")
-                    .add(TextNode::new(block.2.to_string()));
+                    .add(TextNode::new(label_text));
 
                 group.append(label);
             }

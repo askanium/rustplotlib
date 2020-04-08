@@ -14,6 +14,7 @@ use crate::components::legend::{LegendEntry, LegendMarkerType};
 pub struct HorizontalBarView<'a> {
     label_position: BarLabelPosition,
     labels_visible: bool,
+    rounding_precision: Option<usize>,
     entries: Vec<Bar>,
     keys: Vec<String>,
     colors: Vec<Color>,
@@ -29,6 +30,7 @@ impl<'a> HorizontalBarView<'a> {
         Self {
             label_position: BarLabelPosition::EndOutside,
             labels_visible: true,
+            rounding_precision: None,
             entries: Vec::new(),
             keys: Vec::new(),
             colors: Color::color_scheme_10(),
@@ -81,6 +83,12 @@ impl<'a> HorizontalBarView<'a> {
     /// differentiate data), otherwise, this will have no effect.
     pub fn set_custom_data_label(mut self, label: String) -> Self {
         self.custom_data_label = label;
+        self
+    }
+
+    /// Set the precision to which value labels should be rounded.
+    pub fn set_label_rounding_precision(mut self, nr_of_digits: usize) -> Self {
+        self.rounding_precision = Some(nr_of_digits);
         self
     }
 
@@ -147,7 +155,7 @@ impl<'a> HorizontalBarView<'a> {
                 bar_blocks.push(BarBlock::new(stacked_start, stacked_end, *value, self.color_map.get(*key).unwrap().clone()));
             }
 
-            let bar = Bar::new(bar_blocks, Orientation::Horizontal, category.to_string(), self.label_position, self.labels_visible, self.y_scale.unwrap().bandwidth().unwrap(), self.y_scale.unwrap().scale(category));
+            let bar = Bar::new(bar_blocks, Orientation::Horizontal, category.to_string(), self.label_position, self.labels_visible, self.rounding_precision, self.y_scale.unwrap().bandwidth().unwrap(), self.y_scale.unwrap().scale(category));
             bars.push(bar);
         }
 
