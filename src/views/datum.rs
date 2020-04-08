@@ -251,3 +251,17 @@ impl PointDatum<String, f32> for (String, f32) {
         String::new()
     }
 }
+
+impl PointDatum<String, f32> for (String, isize) {
+    fn get_x(&self) -> String {
+        self.0.clone()
+    }
+
+    fn get_y(&self) -> f32 {
+        self.1 as f32
+    }
+
+    fn get_key(&self) -> String {
+        String::new()
+    }
+}

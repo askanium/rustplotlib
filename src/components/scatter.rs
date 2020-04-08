@@ -31,6 +31,7 @@ pub enum PointLabelPosition {
 pub struct ScatterPoint<T: Display, U: Display> {
     label_position: PointLabelPosition,
     label_visible: bool,
+    point_visible: bool,
     marker_type: MarkerType,
     marker_size: usize,
     x: f32,
@@ -50,11 +51,13 @@ impl<T: Display, U: Display> ScatterPoint<T, U> {
         y_label: U,
         label_position: PointLabelPosition,
         label_visible: bool,
+        point_visible: bool,
         color: String
     ) -> Self {
         Self {
             label_position,
             label_visible,
+            point_visible,
             marker_type,
             marker_size,
             x,
@@ -84,7 +87,7 @@ impl<T: Display, U: Display> DatumRepresentation for ScatterPoint<T, U> {
             .set("class", "scatter-point");
 
         match self.marker_type {
-            MarkerType::Circle => {
+            MarkerType::Circle if self.point_visible => {
                 group.append(
                     Circle::new()
                         .set("cx", 0)
@@ -93,7 +96,7 @@ impl<T: Display, U: Display> DatumRepresentation for ScatterPoint<T, U> {
                         .set("fill", self.color.as_ref())
                 );
             },
-            MarkerType::Square => {
+            MarkerType::Square if self.point_visible => {
                 group.append(
                     Rectangle::new()
                         .set("x", -(self.marker_size as i32))
@@ -103,7 +106,7 @@ impl<T: Display, U: Display> DatumRepresentation for ScatterPoint<T, U> {
                         .set("fill", self.color.as_ref())
                 );
             },
-            MarkerType::X => {
+            MarkerType::X if self.point_visible => {
                 group.append(
                     Group::new()
                         .add(
@@ -126,6 +129,7 @@ impl<T: Display, U: Display> DatumRepresentation for ScatterPoint<T, U> {
                         )
                 );
             },
+            _ => {},
         };
 
         if self.label_visible {

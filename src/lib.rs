@@ -39,6 +39,7 @@ pub use crate::views::vertical_bar::VerticalBarView;
 pub use crate::views::horizontal_bar::HorizontalBarView;
 pub use crate::views::scatter::ScatterView;
 pub use crate::views::line::LineSeriesView;
+pub use crate::views::area::AreaSeriesView;
 pub use crate::views::datum::{BarDatum, PointDatum};
 pub use crate::axis::{Axis, AxisPosition};
 pub use crate::components::bar::BarLabelPosition;

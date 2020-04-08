@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-use std::fmt::Display;
 use svg::node::Node;
 use svg::node::element::Group;
 use crate::components::scatter::{ScatterPoint, MarkerType, PointLabelPosition};
@@ -8,23 +6,23 @@ use crate::Scale;
 use crate::views::datum::PointDatum;
 use crate::views::View;
 use crate::components::DatumRepresentation;
+use std::fmt::Display;
 use crate::components::legend::{LegendEntry, LegendMarkerType};
+use crate::components::area::AreaSeries;
 
 /// A View that represents data as a scatter plot.
-pub struct ScatterView<'a, T: Display, U: Display> {
+pub struct AreaSeriesView<'a, T: Display + Clone, U: Display + Clone> {
     labels_visible: bool,
     label_position: PointLabelPosition,
     marker_type: MarkerType,
-    entries: Vec<ScatterPoint<T, U>>,
+    entries: Vec<AreaSeries<T, U>>,
     colors: Vec<Color>,
-    keys: Vec<String>,
-    color_map: HashMap<String, String>,
     x_scale: Option<&'a dyn Scale<T>>,
     y_scale: Option<&'a dyn Scale<U>>,
     custom_data_label: String,
 }
 
-impl<'a, T: Display, U: Display> ScatterView<'a, T, U> {
+impl<'a, T: Display + Clone, U: Display + Clone> AreaSeriesView<'a, T, U> {
     /// Create a new empty instance of the view.
     pub fn new() -> Self {
         Self {
@@ -32,9 +30,7 @@ impl<'a, T: Display, U: Display> ScatterView<'a, T, U> {
             label_position: PointLabelPosition::NW,
             marker_type: MarkerType::Circle,
             entries: Vec::new(),
-            keys: Vec::new(),
             colors: Color::color_scheme_10(),
-            color_map: HashMap::new(),
             x_scale: None,
             y_scale: None,
             custom_data_label: String::new(),
@@ -50,12 +46,6 @@ impl<'a, T: Display, U: Display> ScatterView<'a, T, U> {
     /// Set the scale for the Y dimension.
     pub fn set_y_scale(mut self, scale: &'a impl Scale<U>) -> Self {
         self.y_scale = Some(scale);
-        self
-    }
-
-    /// Set the keys in case of a stacked bar chart.
-    pub fn set_keys(mut self, keys: Vec<String>) -> Self {
-        self.keys = keys;
         self
     }
 
@@ -103,59 +93,47 @@ impl<'a, T: Display, U: Display> ScatterView<'a, T, U> {
             _ => return Err("Please provide a scale for the Y dimension before loading data".to_string()),
         }
 
-        // If no keys were explicitly provided, extract the keys from the data.
-        if self.keys.len() == 0 {
-            self.keys = Self::extract_keys(&data);
-        }
+        // Compute corresponding offsets to apply in case there is a non-zero bandwidth.
+        let y_bandwidth_offset = {
+            if self.y_scale.unwrap().is_range_reversed() {
+                -self.y_scale.unwrap().bandwidth().unwrap() / 2_f32
+            } else {
+                self.y_scale.unwrap().bandwidth().unwrap() / 2_f32
+            }
+        };
+        let x_bandwidth_offset = {
+            if self.x_scale.unwrap().is_range_reversed() {
+                -self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
+            } else {
+                self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
+            }
+        };
 
-        // Organize entries based on the order of the keys first, since displayed data
-        // should keep the order defined in the `keys` attribute.
-        for (i, key) in self.keys.iter_mut().enumerate() {
-            // Map the key to the corresponding color.
-            self.color_map.insert(key.clone(), self.colors[i].as_hex());
-        }
-
-        for datum in data.iter() {
+        let mut points = data.iter().map(|datum| {
             let scaled_x = self.x_scale.unwrap().scale(&datum.get_x());
             let scaled_y = self.y_scale.unwrap().scale(&datum.get_y());
-            let y_bandwidth_offset = {
-                if self.y_scale.unwrap().is_range_reversed() {
-                    -self.y_scale.unwrap().bandwidth().unwrap() / 2_f32
-                } else {
-                    self.y_scale.unwrap().bandwidth().unwrap() / 2_f32
-                }
-            };
-            let x_bandwidth_offset = {
-                if self.x_scale.unwrap().is_range_reversed() {
-                    -self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
-                } else {
-                    self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
-                }
-            };
-            self.entries.push(ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visible, true, self.color_map.get(&datum.get_key()).unwrap().clone()));
-        }
+            ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visible, true, self.colors[0].as_hex())
+        }).collect::<Vec<ScatterPoint<T, U>>>();
+
+        let y_origin = {
+            if self.y_scale.unwrap().is_range_reversed() {
+                self.y_scale.unwrap().range_start()
+            } else {
+                self.y_scale.unwrap().range_end()
+            }
+        };
+        let first = data.first().unwrap();
+        let last = data.last().unwrap();
+        points.push(ScatterPoint::new(self.x_scale.unwrap().scale(&last.get_x()) + x_bandwidth_offset, y_origin, self.marker_type, 5, data[0].get_x(), data[0].get_y(), self.label_position, false, false, "#fff".to_string()));
+        points.push(ScatterPoint::new(self.x_scale.unwrap().scale(&first.get_x()) + x_bandwidth_offset, y_origin, self.marker_type, 5, data[0].get_x(), data[0].get_y(), self.label_position, false, false, "#fff".to_string()));
+
+        self.entries.push(AreaSeries::new(points, self.colors[0].as_hex()));
 
         Ok(self)
     }
-
-    /// Extract the list of keys to use when stacking and coloring the bars.
-    fn extract_keys(data: &Vec<impl PointDatum<T, U>>) -> Vec<String> {
-        let mut keys = Vec::new();
-        let mut map = HashMap::new();
-
-        for datum in data.iter() {
-            match map.insert(datum.get_key(), 0) {
-                Some(_) => {},
-                None => keys.push(datum.get_key()),
-            }
-        }
-
-        keys
-    }
-
 }
 
-impl<'a, T: Display, U: Display> View<'a> for ScatterView<'a, T, U> {
+impl<'a, T: Display + Clone, U: Display + Clone> View<'a> for AreaSeriesView<'a, T, U> {
     /// Generate the SVG representation of the view.
     fn to_svg(&self) -> Result<Group, String> {
         let mut group = Group::new();
@@ -172,16 +150,10 @@ impl<'a, T: Display, U: Display> View<'a> for ScatterView<'a, T, U> {
     fn get_legend_entries(&self) -> Vec<LegendEntry> {
         let mut entries = Vec::new();
 
-        // If there is a single key and it is an empty string (meaning
-        // the dataset consists only of X and Y dimension values), return
-        // the custom data label.
-        if self.keys.len() == 1 && self.keys[0].len() == 0 {
-            entries.push(LegendEntry::new(LegendMarkerType::from(self.marker_type), self.color_map.get(&self.keys[0]).unwrap().clone(), String::from("none"), self.custom_data_label.clone()));
-        } else {
-            for key in self.keys.iter() {
-                entries.push(LegendEntry::new(LegendMarkerType::from(self.marker_type), self.color_map.get(key).unwrap().clone(), String::from("none"), key.clone()));
-            }
-        }
+        // Area series currently does not support multiple keys per dataset,
+        // hence when displaying a legend, it will display the custom data label
+        // as the legend label.
+        entries.push(LegendEntry::new(LegendMarkerType::Square, self.colors[0].as_hex(), String::from("none"), self.custom_data_label.clone()));
 
         entries
     }

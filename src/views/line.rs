@@ -134,7 +134,7 @@ impl<'a, T: Display, U: Display> LineSeriesView<'a, T, U> {
                         self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
                     }
                 };
-                ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visible, self.color_map.get(&datum.get_key()).unwrap().clone())
+                ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visible, true,self.color_map.get(&datum.get_key()).unwrap().clone())
             }).collect::<Vec<ScatterPoint<T, U>>>();
 
             self.entries.push(LineSeries::new(points, self.color_map.get(key).unwrap().clone()));
