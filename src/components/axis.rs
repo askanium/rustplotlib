@@ -37,19 +37,26 @@ impl AxisLine {
 pub struct AxisTick {
     axis_position: AxisPosition,
     label_offset: usize,
+    label_rotation: isize,
     tick_offset: f32,
     label: String,
 }
 
 impl AxisTick {
     /// Create a new instance of AxisTick.
-    pub fn new(tick_offset: f32, label_offset: usize, label: String, axis_position: AxisPosition) -> Self {
+    pub fn new(tick_offset: f32, label_offset: usize, label_rotation: isize, label: String, axis_position: AxisPosition) -> Self {
         Self {
             label_offset,
             tick_offset,
+            label_rotation,
             label,
             axis_position,
         }
+    }
+
+    /// Set label rotation.
+    pub fn set_label_rotation(&mut self, rotation: isize) {
+        self.label_rotation = rotation;
     }
 
     /// Render the axis tick to svg.
@@ -100,11 +107,12 @@ impl AxisTick {
             .set("stroke-width", "1px");
 
         let tick_label = Text::new()
+            .set("transform", format!("rotate({},{},{})", self.label_rotation, tick_label_offset.0, tick_label_offset.1))
             .set("x", tick_label_offset.0)
             .set("y", tick_label_offset.1)
             .set("dy", ".35em")
             .set("text-anchor", tick_label_text_anchor)
-            .set("font-size", "14px")
+            .set("font-size", "12px")
             .set("font-family", "sans-serif")
             .set("fill", "#777")
             .add(TextNode::new(&self.label));

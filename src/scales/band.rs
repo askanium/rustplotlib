@@ -1,4 +1,3 @@
-use std::cmp::{max, Ordering};
 use std::collections::HashMap;
 use std::collections::HashSet;
 use crate::scales::{Scale, ScaleType};

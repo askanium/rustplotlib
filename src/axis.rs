@@ -23,6 +23,7 @@ pub struct Axis {
     axis_line: AxisLine,
     position: AxisPosition,
     label: String,
+    label_rotation: isize,
     length: isize,
 }
 
@@ -34,6 +35,7 @@ impl Axis {
             position,
             axis_line: Self::get_axis_line(position, chart),
             label: String::new(),
+            label_rotation: 0,
             length: Self::get_axis_length(position, chart),
         }
     }
@@ -61,6 +63,12 @@ impl Axis {
     /// Set axis label.
     pub fn set_axis_label(&mut self, label: String) {
         self.label = label;
+    }
+
+    /// Set tick label rotation.
+    pub fn set_tick_label_rotation(&mut self, rotation: isize) {
+        self.label_rotation = rotation;
+        self.ticks.iter_mut().for_each(|tick| tick.set_label_rotation(rotation));
     }
 
     /// Return whether the axis has a label or not.
@@ -138,7 +146,7 @@ impl Axis {
                 AxisPosition::Right if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
                 AxisPosition::Right => scale.scale(&tick),
             };
-            let axis_tick = AxisTick::new(tick_offset, label_offset, tick.to_string(), position);
+            let axis_tick = AxisTick::new(tick_offset, label_offset, 0, tick.to_string(), position);
             ticks.push(axis_tick);
         }
 
