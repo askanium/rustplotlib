@@ -1,4 +1,6 @@
+use std::cmp::{max, Ordering};
 use std::collections::HashMap;
+use std::collections::HashSet;
 use crate::scales::{Scale, ScaleType};
 
 /// The scale to represent categorical data.
@@ -64,7 +66,19 @@ impl ScaleBand {
 
     /// Set the domain limits for the scale band.
     pub fn set_domain(mut self, range: Vec<String>) -> Self {
-        self.domain = range;
+        // Deduplicate the domain range and keep order of entries.
+        let mut unique = Vec::new();
+        let mut set: HashSet<String> = HashSet::new();
+
+        for el in range.into_iter() {
+            let clone = el.clone();
+            if !set.contains(&clone) {
+                set.insert(clone);
+                unique.push(el);
+            }
+        }
+
+        self.domain = unique;
         self.rescale();
         self
     }
