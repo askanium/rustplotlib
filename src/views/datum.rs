@@ -70,6 +70,20 @@ impl BarDatum for (&str, f32, &str) {
     }
 }
 
+impl BarDatum for (&str, isize, &str) {
+    fn get_category(&self) -> String {
+        String::from(self.0)
+    }
+
+    fn get_value(&self) -> f32 {
+        self.1 as f32
+    }
+
+    fn get_key(&self) -> String {
+        String::from(self.2)
+    }
+}
+
 impl BarDatum for (String, f32) {
     fn get_category(&self) -> String {
         String::from(&self.0)
