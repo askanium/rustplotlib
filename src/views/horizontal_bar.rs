@@ -116,7 +116,7 @@ impl<'a> HorizontalBarView<'a> {
         // should keep the order defined in the `keys` attribute.
         for (i, key) in self.keys.iter_mut().enumerate() {
             // Map the key to the corresponding color.
-            self.color_map.insert(key.clone(), self.colors[i].as_hex());
+            self.color_map.insert(key.clone(), self.colors[i % self.colors.len()].as_hex());
 
             for entry in data.iter() {
                 if entry.get_key() == *key {
