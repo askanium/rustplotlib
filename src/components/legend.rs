@@ -48,7 +48,7 @@ impl LegendEntry {
     /// Return legend entry width to compute the placement of legend entries on the chart.
     pub fn get_width(&self) -> usize {
         // TODO ideally, compute the length of the given `label` in the given font and size
-        let avg_letter_width = 11; // this is for the default sans-serif 14px font + some buffer
+        let avg_letter_width = 7; // this is for the default sans-serif 12px font + some buffer
         avg_letter_width * self.label.len() + self.marker_size * 2 + self.marker_to_label_gap
     }
 
@@ -113,7 +113,7 @@ impl LegendEntry {
                 .set("dy", ".35em")
                 .set("font-family", "sans-serif")
                 .set("fill", "#777")
-                .set("font-size", "14px")
+                .set("font-size", "12px")
                 .add(TextNode::new(self.label.clone()))
         );
 
