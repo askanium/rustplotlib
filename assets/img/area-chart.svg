@@ -2,7 +2,7 @@
 <g class="g-chart">
 <g class="g-title" transform="translate(400,25)">
 <text dy=".35em" fill="#777" font-family="sans-serif" font-size="24px" text-anchor="middle" x="0" y="0">
-Scatter Chart
+Area Chart
 </text>
 </g>
 <g class="x-axis" transform="translate(60,550)">
