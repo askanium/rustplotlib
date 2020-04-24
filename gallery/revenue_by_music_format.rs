@@ -51,7 +51,7 @@ fn main() -> std::io::Result<()> {
         .add_view(&view)
         .add_axis_bottom(&x)
         .add_axis_left(&y)
-        .draw_legend_at(AxisPosition::Top)
+        .add_legend_at(AxisPosition::Top)
         .set_bottom_axis_tick_label_rotation(-90)
         .set_left_axis_tick_label_format(".2s")
         .add_left_axis_label("Revenue ($)")

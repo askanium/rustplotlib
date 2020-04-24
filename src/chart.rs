@@ -195,7 +195,7 @@ impl<'a> Chart<'a> {
     }
 
     /// Set legend position at the specified side of the chart.
-    pub fn draw_legend_at(mut self, position: AxisPosition) -> Self {
+    pub fn add_legend_at(mut self, position: AxisPosition) -> Self {
         self.legend_position = Some(position);
         self
     }
