@@ -14,7 +14,7 @@ You can add this as a dependency to your project in your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-charts = "0.2.0"
+charts = "0.3.0"
 ```
 
 ## Chart Types
