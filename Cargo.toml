@@ -14,3 +14,4 @@ readme = "README.md"
 
 [dependencies]
 svg="0.7.1"
+format_num = "0.1.0"
