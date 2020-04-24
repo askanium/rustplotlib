@@ -2,6 +2,12 @@
 
 A pure Rust visualization library inspired by D3.js.
 
+See [gallery](./gallery) and [examples](./examples) for code and more charts.
+
+![Frequency Of English Letters](./assets/img/gallery/letter-frequency.svg)
+
+![Revenue By Music Format](./assets/img/gallery/revenue-by-music-format.svg)
+
 ## Install
 
 You can add this as a dependency to your project in your `Cargo.toml` file:
@@ -20,8 +26,8 @@ The library supports the following charts (more to be added soon):
 3. Horizontal Bar Chart
 4. Horizontal Stacked Bar Chart
 5. Scatter Chart
-6. Line Chart (TBD next)
-7. Area Chart (TBD next)
+6. Line Chart
+7. Area Chart
 7. Histogram (TBD)
 8. Box Plot (TBD)
 9. Other (TBD)
@@ -36,7 +42,7 @@ Here are the components that allow you to create a chart:
 2. **Views**
 3. Axes
 4. Size and Margins
-5. Legend (TBD)
+5. Legend
  
 The first two are foundational components that offer a certain degree of flexibility in how data is
 represented and how it can be combined to achieve the desired outcome when the goal is to visualize
@@ -96,6 +102,8 @@ Here is the list of views that are available:
 1. VerticalBarView
 2. HorizontalBarView
 3. ScatterView
+4. LineSeriesView
+5. AreaSeriesView
 
 ### 3. Axes
 
@@ -133,6 +141,20 @@ left: 60` will leave an area of 700px wide and 450px tall for actual data repres
 |                      bottom - 50                      |
 +-------------------------------------------------------+
 ```
+
+### 5. Legend
+
+The legend is automatically populated with entries present in each view
+attached to a chart. In order to add a legend to a chart, use the
+`add_legend_at(position: AxisPosition)` method on a chart instance (don't
+forget to leave sufficient margin at the bottom for the legend to show up).
+
+The dataset's `key` values are used as legend entry labels. In case the
+dataset doesn't have any key values (i.e. when the dataset represents a
+single type of data), you can specify a custom label on a `View` via the
+`.set_custom_data_label(label: String)` method. Check out the 
+[Chart Composition](#chart-composition) section example of scatter plot
+with two datasets.
 
 ## Examples
 
@@ -402,6 +424,119 @@ fn main() {
 
 ![Scatter Chart with data with different keys](./assets/img/scatter-chart-multiple-keys.svg)
 
+### Line Series
+
+Line series supports the same functionality os a Scatter plot.
+
+```rust
+use charts::{Chart, ScaleLinear, MarkerType, PointLabelPosition, LineSeriesView};
+
+fn main() {
+    // Define chart related sizes.
+    let width = 800;
+    let height = 600;
+    let (top, right, bottom, left) = (90, 40, 50, 60);
+
+    // Create a band scale that will interpolate values in [0, 200] to values in the
+    // [0, availableWidth] range (the width of the chart without the margins).
+    let x = ScaleLinear::new()
+        .set_domain(vec![0_f32, 200_f32])
+        .set_range(vec![0, width - left - right]);
+
+    // Create a linear scale that will interpolate values in [0, 100] range to corresponding
+    // values in [availableHeight, 0] range (the height of the chart without the margins).
+    // The [availableHeight, 0] range is inverted because SVGs coordinate system's origin is
+    // in top left corner, while chart's origin is in bottom left corner, hence we need to invert
+    // the range on Y axis for the chart to display as though its origin is at bottom left.
+    let y = ScaleLinear::new()
+        .set_domain(vec![0_f32, 100_f32])
+        .set_range(vec![height - top - bottom, 0]);
+
+    // You can use your own iterable as data as long as its items implement the `PointDatum` trait.
+    let line_data = vec![(12, 54), (100, 40), (120, 50), (180, 70)];
+
+    // Create Line series view that is going to represent the data.
+    let line_view = LineSeriesView::new()
+        .set_x_scale(&x)
+        .set_y_scale(&y)
+        .set_marker_type(MarkerType::Circle)
+        .set_label_position(PointLabelPosition::N)
+        .load_data(&line_data).unwrap();
+
+    // Generate and save the chart.
+    Chart::new()
+        .set_width(width)
+        .set_height(height)
+        .set_margins(top, right, bottom, left)
+        .add_title(String::from("Line Chart"))
+        .add_view(&line_view)
+        .add_axis_bottom(&x)
+        .add_axis_left(&y)
+        .add_left_axis_label("Custom Y Axis Label")
+        .add_bottom_axis_label("Custom X Axis Label")
+        .save("line-chart.svg").unwrap();
+}
+```
+
+![Line Series](./assets/img/line-chart.svg)
+
+### Area Series
+
+Currently, AreaSeriesView doesn't support datasets with multiple keys, thus
+it cannot display a stacked area chart.
+
+```rust
+use charts::{Chart, ScaleLinear, MarkerType, PointLabelPosition, AreaSeriesView};
+
+fn main() {
+    // Define chart related sizes.
+    let width = 800;
+    let height = 600;
+    let (top, right, bottom, left) = (90, 40, 50, 60);
+
+    // Create a band scale that will interpolate values in [0, 200] to values in the
+    // [0, availableWidth] range (the width of the chart without the margins).
+    let x = ScaleLinear::new()
+        .set_domain(vec![12_f32, 180_f32])
+        .set_range(vec![0, width - left - right]);
+
+    // Create a linear scale that will interpolate values in [0, 100] range to corresponding
+    // values in [availableHeight, 0] range (the height of the chart without the margins).
+    // The [availableHeight, 0] range is inverted because SVGs coordinate system's origin is
+    // in top left corner, while chart's origin is in bottom left corner, hence we need to invert
+    // the range on Y axis for the chart to display as though its origin is at bottom left.
+    let y = ScaleLinear::new()
+        .set_domain(vec![0_f32, 100_f32])
+        .set_range(vec![height - top - bottom, 0]);
+
+    // You can use your own iterable as data as long as its items implement the `PointDatum` trait.
+    let area_data = vec![(12, 54), (100, 40), (120, 50), (180, 70)];
+
+    // Create Area series view that is going to represent the data.
+    let area_view = AreaSeriesView::new()
+        .set_x_scale(&x)
+        .set_y_scale(&y)
+        .set_marker_type(MarkerType::Circle)
+        .set_label_position(PointLabelPosition::N)
+        .load_data(&area_data).unwrap();
+
+    // Generate and save the chart.
+    Chart::new()
+        .set_width(width)
+        .set_height(height)
+        .set_margins(top, right, bottom, left)
+        .add_title(String::from("Area Chart"))
+        .add_view(&area_view)
+        .add_axis_bottom(&x)
+        .add_axis_left(&y)
+        .add_left_axis_label("Custom Y Axis Label")
+        .add_bottom_axis_label("Custom X Axis Label")
+        .save("area-chart.svg").unwrap();
+}
+```
+
+![Area Series Chart](./assets/img/area-chart.svg)
+
 ## Chart Composition
 
 Once you understand the basic building blocks (mainly *Scales* and *Views*), the sky is the limit 
@@ -481,18 +616,18 @@ Another example is combining different datasets. For instance, we can define sca
 the domain from both datasets and see how they relate to each other.
 
 ```rust
-use charts::{Chart, ScaleLinear, ScatterView, MarkerType, PointLabelPosition, Color};
+use charts::{Chart, ScaleLinear, ScatterView, MarkerType, PointLabelPosition, Color, AxisPosition};
 
 fn main() {
     // Define chart related sizes.
     let width = 800;
     let height = 600;
-    let (top, right, bottom, left) = (90, 40, 50, 60);
+    let (top, right, bottom, left) = (90, 40, 80, 60);
 
     // Create a band scale that will interpolate values in [0, 200] to values in the
     // [0, availableWidth] range (the width of the chart without the margins).
     let x = ScaleLinear::new()
-        .set_domain(vec![0, 200])
+        .set_domain(vec![0_f32, 200_f32])
         .set_range(vec![0, width - left - right]);
 
     // Create a linear scale that will interpolate values in [0, 100] range to corresponding
@@ -501,7 +636,7 @@ fn main() {
     // in top left corner, while chart's origin is in bottom left corner, hence we need to invert
     // the range on Y axis for the chart to display as though its origin is at bottom left.
     let y = ScaleLinear::new()
-        .set_domain(vec![0, 100])
+        .set_domain(vec![0_f32, 100_f32])
         .set_range(vec![height - top - bottom, 0]);
 
     // You can use your own iterable as data as long as its items implement the `PointDatum` trait.
@@ -514,6 +649,7 @@ fn main() {
         .set_y_scale(&y)
         .set_marker_type(MarkerType::Circle)
         .set_label_position(PointLabelPosition::N)
+        .set_custom_data_label("Apples".to_owned())
         .load_data(&scatter_data_1).unwrap();
 
     // Create Scatter view that is going to represent the data as points.
@@ -522,6 +658,7 @@ fn main() {
         .set_y_scale(&y)
         .set_marker_type(MarkerType::Square)
         .set_label_position(PointLabelPosition::N)
+        .set_custom_data_label("Oranges".to_owned())
         .set_colors(Color::from_vec_of_hex_strings(vec!["#aa0000"]))
         .load_data(&scatter_data_2).unwrap();
 
@@ -537,6 +674,7 @@ fn main() {
         .add_axis_left(&y)
         .add_left_axis_label("Custom X Axis Label")
         .add_bottom_axis_label("Custom Y Axis Label")
+        .add_legend_at(AxisPosition::Bottom)
         .save("scatter-chart-two-datasets.svg").unwrap();
 }
 ```
