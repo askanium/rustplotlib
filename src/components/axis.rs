@@ -2,6 +2,7 @@ use svg::node::element::{Group, Line};
 use svg::node::Text as TextNode;
 use svg::node::element::Text;
 use svg::Node;
+use format_num::NumberFormat;
 use crate::axis::AxisPosition;
 
 /// A simple struct that represents an axis line.
@@ -40,6 +41,7 @@ pub struct AxisTick {
     label_rotation: isize,
     tick_offset: f32,
     label: String,
+    label_format: Option<String>
 }
 
 impl AxisTick {
@@ -51,6 +53,7 @@ impl AxisTick {
             label_rotation,
             label,
             axis_position,
+            label_format: None,
         }
     }
 
@@ -59,8 +62,19 @@ impl AxisTick {
         self.label_rotation = rotation;
     }
 
+    /// Set label rotation.
+    pub fn set_label_format(&mut self, format: &str) {
+        self.label_format = Some(format.to_owned());
+    }
+
     /// Render the axis tick to svg.
     pub fn to_svg(&self) -> Result<Group, String> {
+        let formatted_label = if self.label_format.is_some() {
+            let formatter = NumberFormat::new();
+            formatter.format(self.label_format.as_ref().unwrap(), self.label.parse::<f64>().unwrap()).replace('G', "B")
+        } else {
+            self.label.to_owned()
+        };
         let offsets: (f32, f32);
         let tick_line_p2: (isize, isize);
         let tick_label_offset: (isize, isize);
@@ -115,7 +129,7 @@ impl AxisTick {
             .set("font-size", "12px")
             .set("font-family", "sans-serif")
             .set("fill", "#777")
-            .add(TextNode::new(&self.label));
+            .add(TextNode::new(formatted_label));
 
         group.append(tick_line);
         group.append(tick_label);
