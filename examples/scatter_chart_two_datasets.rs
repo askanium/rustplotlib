@@ -1,10 +1,10 @@
-use charts::{Chart, ScaleLinear, ScatterView, MarkerType, PointLabelPosition, Color};
+use charts::{Chart, ScaleLinear, ScatterView, MarkerType, PointLabelPosition, Color, AxisPosition};
 
 fn main() {
     // Define chart related sizes.
     let width = 800;
     let height = 600;
-    let (top, right, bottom, left) = (90, 40, 50, 60);
+    let (top, right, bottom, left) = (90, 40, 80, 60);
 
     // Create a band scale that will interpolate values in [0, 200] to values in the
     // [0, availableWidth] range (the width of the chart without the margins).
@@ -31,6 +31,7 @@ fn main() {
         .set_y_scale(&y)
         .set_marker_type(MarkerType::Circle)
         .set_label_position(PointLabelPosition::N)
+        .set_custom_data_label("Apples".to_owned())
         .load_data(&scatter_data_1).unwrap();
 
     // Create Scatter view that is going to represent the data as points.
@@ -39,6 +40,7 @@ fn main() {
         .set_y_scale(&y)
         .set_marker_type(MarkerType::Square)
         .set_label_position(PointLabelPosition::N)
+        .set_custom_data_label("Oranges".to_owned())
         .set_colors(Color::from_vec_of_hex_strings(vec!["#aa0000"]))
         .load_data(&scatter_data_2).unwrap();
 
@@ -54,5 +56,6 @@ fn main() {
         .add_axis_left(&y)
         .add_left_axis_label("Custom X Axis Label")
         .add_bottom_axis_label("Custom Y Axis Label")
+        .add_legend_at(AxisPosition::Bottom)
         .save("scatter-chart-two-datasets.svg").unwrap();
 }
