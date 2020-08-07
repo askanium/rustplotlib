@@ -273,7 +273,7 @@ impl<'a> Chart<'a> {
     }
 
     /// Generate the SVG for the chart and its components.
-    fn to_svg(&self) -> Result<Group, String> {
+    pub fn to_svg(&self) -> Result<Group, String> {
         let mut group = Group::new()
             .set("class", "g-chart");
 
