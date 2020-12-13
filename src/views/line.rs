@@ -13,6 +13,7 @@ use crate::components::legend::{LegendEntry, LegendMarkerType};
 /// A View that represents data as a scatter plot.
 pub struct LineSeriesView<'a, T: Display, U: Display> {
     labels_visible: bool,
+    marker_visible: bool,
     label_position: PointLabelPosition,
     marker_type: MarkerType,
     entries: Vec<LineSeries<T, U>>,
@@ -29,6 +30,7 @@ impl<'a, T: Display, U: Display> LineSeriesView<'a, T, U> {
     pub fn new() -> Self {
         Self {
             labels_visible: true,
+            marker_visible: true,
             label_position: PointLabelPosition::NW,
             marker_type: MarkerType::Circle,
             entries: Vec::new(),
@@ -83,6 +85,12 @@ impl<'a, T: Display, U: Display> LineSeriesView<'a, T, U> {
         self
     }
 
+    /// Set marker visibility.
+    pub fn set_marker_visibility(mut self, marker_visibility: bool) -> Self {
+        self.marker_visible = marker_visibility;
+        self
+    }
+
     /// Set custom label for the dataset.
     /// This will work when the dataset represents only a single
     /// type of data (i.e. there are no different "keys" by which to
@@ -134,7 +142,7 @@ impl<'a, T: Display, U: Display> LineSeriesView<'a, T, U> {
                         self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
                     }
                 };
-                ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visible, true,self.color_map.get(&datum.get_key()).unwrap().clone())
+                ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visible, self.marker_visibility,self.color_map.get(&datum.get_key()).unwrap().clone())
             }).collect::<Vec<ScatterPoint<T, U>>>();
 
             self.entries.push(LineSeries::new(points, self.color_map.get(key).unwrap().clone()));
