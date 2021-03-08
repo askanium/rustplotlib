@@ -68,7 +68,7 @@ impl<T: Display, U: Display> ScatterPoint<T, U> {
         x_label: T,
         y_label: U,
         label_position: PointLabelPosition,
-        label_visibility LabelVisibility,
+        label_visibility: LabelVisibility,
         point_visible: bool,
         color: String
     ) -> Self {
