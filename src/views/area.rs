@@ -1,6 +1,6 @@
 use svg::node::Node;
 use svg::node::element::Group;
-use crate::components::scatter::{ScatterPoint, MarkerType, PointLabelPosition};
+use crate::components::scatter::{ScatterPoint, MarkerType, PointLabelPosition, LabelVisibility};
 use crate::colors::Color;
 use crate::Scale;
 use crate::views::datum::PointDatum;
@@ -12,7 +12,7 @@ use crate::components::area::AreaSeries;
 
 /// A View that represents data as a scatter plot.
 pub struct AreaSeriesView<'a, T: Display + Clone, U: Display + Clone> {
-    labels_visible: bool,
+    labels_visibility: LabelVisibility,
     label_position: PointLabelPosition,
     marker_type: MarkerType,
     entries: Vec<AreaSeries<T, U>>,
@@ -26,7 +26,7 @@ impl<'a, T: Display + Clone, U: Display + Clone> AreaSeriesView<'a, T, U> {
     /// Create a new empty instance of the view.
     pub fn new() -> Self {
         Self {
-            labels_visible: true,
+            labels_visibility: LabelVisibility::BothCoordinates,
             label_position: PointLabelPosition::NW,
             marker_type: MarkerType::Circle,
             entries: Vec::new(),
@@ -68,8 +68,8 @@ impl<'a, T: Display + Clone, U: Display + Clone> AreaSeriesView<'a, T, U> {
     }
 
     /// Set labels visibility.
-    pub fn set_label_visibility(mut self, label_visibility: bool) -> Self {
-        self.labels_visible = label_visibility;
+    pub fn set_label_visibility(mut self, label_visibility: LabelVisibility) -> Self {
+        self.labels_visibility = label_visibility;
         self
     }
 
@@ -112,7 +112,7 @@ impl<'a, T: Display + Clone, U: Display + Clone> AreaSeriesView<'a, T, U> {
         let mut points = data.iter().map(|datum| {
             let scaled_x = self.x_scale.unwrap().scale(&datum.get_x());
             let scaled_y = self.y_scale.unwrap().scale(&datum.get_y());
-            ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visible, true, self.colors[0].as_hex())
+            ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visibility, true, self.colors[0].as_hex())
         }).collect::<Vec<ScatterPoint<T, U>>>();
 
         let y_origin = {
@@ -124,8 +124,8 @@ impl<'a, T: Display + Clone, U: Display + Clone> AreaSeriesView<'a, T, U> {
         };
         let first = data.first().unwrap();
         let last = data.last().unwrap();
-        points.push(ScatterPoint::new(self.x_scale.unwrap().scale(&last.get_x()) + x_bandwidth_offset, y_origin, self.marker_type, 5, data[0].get_x(), data[0].get_y(), self.label_position, false, false, "#fff".to_string()));
-        points.push(ScatterPoint::new(self.x_scale.unwrap().scale(&first.get_x()) + x_bandwidth_offset, y_origin, self.marker_type, 5, data[0].get_x(), data[0].get_y(), self.label_position, false, false, "#fff".to_string()));
+        points.push(ScatterPoint::new(self.x_scale.unwrap().scale(&last.get_x()) + x_bandwidth_offset, y_origin, self.marker_type, 5, data[0].get_x(), data[0].get_y(), self.label_position, LabelVisibility::None, false, "#fff".to_string()));
+        points.push(ScatterPoint::new(self.x_scale.unwrap().scale(&first.get_x()) + x_bandwidth_offset, y_origin, self.marker_type, 5, data[0].get_x(), data[0].get_y(), self.label_position, LabelVisibility::None, false, "#fff".to_string()));
 
         self.entries.push(AreaSeries::new(points, self.colors[0].as_hex()));
 
