@@ -44,7 +44,7 @@ pub use crate::views::datum::{BarDatum, PointDatum};
 pub use crate::axis::{Axis, AxisPosition};
 pub use crate::components::bar::BarLabelPosition;
 pub use crate::components::line::LineSeries;
-pub use crate::components::scatter::{MarkerType, PointLabelPosition};
+pub use crate::components::scatter::{MarkerType, PointLabelPosition, LabelVisibility};
 pub use crate::colors::Color;
 
 #[cfg(test)]
