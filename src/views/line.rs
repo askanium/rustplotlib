@@ -29,7 +29,7 @@ impl<'a, T: Display, U: Display> LineSeriesView<'a, T, U> {
     /// Create a new empty instance of the view.
     pub fn new() -> Self {
         Self {
-            abels_visibility: LabelVisibility::BothCoordinates,
+            labels_visibility: LabelVisibility::BothCoordinates,
             marker_visible: true,
             label_position: PointLabelPosition::NW,
             marker_type: MarkerType::Circle,
