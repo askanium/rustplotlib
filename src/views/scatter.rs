@@ -79,7 +79,7 @@ impl<'a, T: Display, U: Display> ScatterView<'a, T, U> {
 
     /// Set labels visibility.
     pub fn set_label_visibility(mut self, label_visibility: LabelVisibility) -> Self {
-        self.labels_visible = label_visibility;
+        self.labels_visibility = label_visibility;
         self
     }
 
@@ -132,7 +132,7 @@ impl<'a, T: Display, U: Display> ScatterView<'a, T, U> {
                     self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
                 }
             };
-            self.entries.push(ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visible, true, self.color_map.get(&datum.get_key()).unwrap().clone()));
+            self.entries.push(ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visibility, true, self.color_map.get(&datum.get_key()).unwrap().clone()));
         }
 
         Ok(self)
