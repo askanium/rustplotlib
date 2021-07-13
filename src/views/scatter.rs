@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fmt::Display;
 use svg::node::Node;
 use svg::node::element::Group;
-use crate::components::scatter::{ScatterPoint, MarkerType, PointLabelPosition};
+use crate::components::scatter::{ScatterPoint, MarkerType, PointLabelPosition, LabelVisibility};
 use crate::colors::Color;
 use crate::Scale;
 use crate::views::datum::PointDatum;
@@ -12,7 +12,7 @@ use crate::components::legend::{LegendEntry, LegendMarkerType};
 
 /// A View that represents data as a scatter plot.
 pub struct ScatterView<'a, T: Display, U: Display> {
-    labels_visible: bool,
+    labels_visibility: LabelVisibility,
     label_position: PointLabelPosition,
     marker_type: MarkerType,
     entries: Vec<ScatterPoint<T, U>>,
@@ -28,7 +28,7 @@ impl<'a, T: Display, U: Display> ScatterView<'a, T, U> {
     /// Create a new empty instance of the view.
     pub fn new() -> Self {
         Self {
-            labels_visible: true,
+            labels_visibility: LabelVisibility::BothCoordinates,
             label_position: PointLabelPosition::NW,
             marker_type: MarkerType::Circle,
             entries: Vec::new(),
@@ -78,8 +78,8 @@ impl<'a, T: Display, U: Display> ScatterView<'a, T, U> {
     }
 
     /// Set labels visibility.
-    pub fn set_label_visibility(mut self, label_visibility: bool) -> Self {
-        self.labels_visible = label_visibility;
+    pub fn set_label_visibility(mut self, label_visibility: LabelVisibility) -> Self {
+        self.labels_visibility = label_visibility;
         self
     }
 
@@ -132,7 +132,7 @@ impl<'a, T: Display, U: Display> ScatterView<'a, T, U> {
                     self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
                 }
             };
-            self.entries.push(ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visible, true, self.color_map.get(&datum.get_key()).unwrap().clone()));
+            self.entries.push(ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visibility, true, self.color_map.get(&datum.get_key()).unwrap().clone()));
         }
 
         Ok(self)

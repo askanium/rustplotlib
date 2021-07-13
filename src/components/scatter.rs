@@ -23,14 +23,32 @@ pub enum PointLabelPosition {
     S,
     SW,
     W,
-    NW
+    NW,
+}
+
+/// Define the possible visibility types of a point's label.
+#[derive(Debug, Copy, Clone)]
+pub enum LabelVisibility {
+    None,
+    XCoordinate,
+    YCoordinate,
+    BothCoordinates,
+}
+
+impl LabelVisibility {
+    fn is_visible(&self) -> bool {
+        match *self {
+            Self::None => false,
+            _ => true,
+        }
+    }
 }
 
 /// Represents a point in a scatter plot.
 #[derive(Debug)]
 pub struct ScatterPoint<T: Display, U: Display> {
     label_position: PointLabelPosition,
-    label_visible: bool,
+    label_visibility: LabelVisibility,
     point_visible: bool,
     marker_type: MarkerType,
     marker_size: usize,
@@ -50,13 +68,13 @@ impl<T: Display, U: Display> ScatterPoint<T, U> {
         x_label: T,
         y_label: U,
         label_position: PointLabelPosition,
-        label_visible: bool,
+        label_visibility: LabelVisibility,
         point_visible: bool,
         color: String
     ) -> Self {
         Self {
             label_position,
-            label_visible,
+            label_visibility,
             point_visible,
             marker_type,
             marker_size,
@@ -132,13 +150,18 @@ impl<T: Display, U: Display> DatumRepresentation for ScatterPoint<T, U> {
             _ => {},
         };
 
-        if self.label_visible {
+        if self.label_visibility.is_visible() {
             let mut point_label = Text::new()
                 .set("dy", ".35em")
                 .set("font-family", "sans-serif")
                 .set("fill", "#333")
                 .set("font-size", "14px")
-                .add(TextNode::new(format!("({}, {})", self.x_label, self.y_label)));
+                .add(match self.label_visibility {
+                    LabelVisibility::BothCoordinates => TextNode::new(format!("({}, {})", self.x_label, self.y_label)),
+                    LabelVisibility::XCoordinate => TextNode::new(format!("{}", self.x_label)),
+                    LabelVisibility::YCoordinate => TextNode::new(format!("{}", self.y_label)),
+                    LabelVisibility::None => TextNode::new(String::new()),
+                });
 
             let label_offset = self.marker_size as isize;
             match self.label_position {
