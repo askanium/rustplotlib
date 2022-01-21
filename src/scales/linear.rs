@@ -1,15 +1,15 @@
-use std::cmp::{max, Ordering};
 use crate::scales::{Scale, ScaleType};
+use std::cmp::{max, Ordering};
 
 /// The scale to represent categorical data.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ScaleLinear {
     /// The domain limits of the dataset that the scale is going to represent.
-    domain: Vec<f32>,
+    pub domain: Vec<f32>,
     /// The range limits of the drawable area on the chart.
-    range: Vec<isize>,
+    pub range: Vec<isize>,
     /// The amount of ticks to display.
-    tick_count: usize,
+    pub tick_count: usize,
 }
 
 impl ScaleLinear {
