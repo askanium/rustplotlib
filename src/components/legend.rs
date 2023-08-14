@@ -1,8 +1,8 @@
-use svg::node::element::{Group, Circle, Rectangle, Line};
-use svg::Node;
-use svg::node::Text as TextNode;
-use svg::node::element::Text;
 use crate::MarkerType;
+use svg::node::element::Text;
+use svg::node::element::{Circle, Group, Line, Rectangle};
+use svg::node::Text as TextNode;
+use svg::Node;
 
 /// Represents the possible marker types that a legend entry can have.
 pub enum LegendMarkerType {
@@ -34,7 +34,12 @@ pub struct LegendEntry {
 
 impl LegendEntry {
     /// Create a new legend entry.
-    pub fn new(marker_type: LegendMarkerType, color: String, stroke_type: String, label: String) -> Self {
+    pub fn new(
+        marker_type: LegendMarkerType,
+        color: String,
+        stroke_type: String,
+        label: String,
+    ) -> Self {
         Self {
             marker_type,
             marker_size: 7,
@@ -53,8 +58,7 @@ impl LegendEntry {
     }
 
     pub fn to_svg(&self) -> Result<Group, String> {
-        let mut group = Group::new()
-            .set("class", "legend-entry");
+        let mut group = Group::new().set("class", "legend-entry");
 
         match self.marker_type {
             LegendMarkerType::Circle => group.append(
@@ -63,7 +67,7 @@ impl LegendEntry {
                     .set("cy", self.marker_size)
                     .set("r", self.marker_size)
                     .set("fill", self.color.as_ref())
-                    .set("stroke", "none")
+                    .set("stroke", "none"),
             ),
             LegendMarkerType::Square => group.append(
                 Rectangle::new()
@@ -72,7 +76,7 @@ impl LegendEntry {
                     .set("width", 2 * self.marker_size)
                     .set("height", 2 * self.marker_size)
                     .set("fill", self.color.as_ref())
-                    .set("stroke", "none")
+                    .set("stroke", "none"),
             ),
             LegendMarkerType::X => {
                 group.append(
@@ -82,7 +86,7 @@ impl LegendEntry {
                         .set("x2", 2 * self.marker_size)
                         .set("y2", 2 * self.marker_size)
                         .set("stroke", self.color.as_ref())
-                        .set("stroke-width", "2px")
+                        .set("stroke-width", "2px"),
                 );
                 group.append(
                     Line::new()
@@ -91,9 +95,9 @@ impl LegendEntry {
                         .set("x2", 0)
                         .set("y2", 2 * self.marker_size)
                         .set("stroke", self.color.as_ref())
-                        .set("stroke-width", "2px")
+                        .set("stroke-width", "2px"),
                 )
-            },
+            }
             LegendMarkerType::Line => group.append(
                 Line::new()
                     .set("x1", 0)
@@ -102,7 +106,7 @@ impl LegendEntry {
                     .set("y2", self.marker_size)
                     .set("stroke", self.color.as_ref())
                     .set("stroke-width", "2px")
-                    .set("stroke-dasharray", self.stroke_type.as_ref())
+                    .set("stroke-dasharray", self.stroke_type.as_ref()),
             ),
         }
 
@@ -114,7 +118,7 @@ impl LegendEntry {
                 .set("font-family", "sans-serif")
                 .set("fill", "#777")
                 .set("font-size", "12px")
-                .add(TextNode::new(self.label.clone()))
+                .add(TextNode::new(self.label.clone())),
         );
 
         Ok(group)

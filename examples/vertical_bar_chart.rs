@@ -1,4 +1,4 @@
-use charts::{Chart, VerticalBarView, ScaleBand, ScaleLinear};
+use charts::{Chart, ScaleBand, ScaleLinear, VerticalBarView};
 
 fn main() {
     // Define chart related sizes.
@@ -9,7 +9,11 @@ fn main() {
     // Create a band scale that maps ["A", "B", "C"] categories to values in the [0, availableWidth]
     // range (the width of the chart without the margins).
     let x = ScaleBand::new()
-        .set_domain(vec![String::from("A"), String::from("B"), String::from("C")])
+        .set_domain(vec![
+            String::from("A"),
+            String::from("B"),
+            String::from("C"),
+        ])
         .set_range(vec![0, width - left - right])
         .set_inner_padding(0.1)
         .set_outer_padding(0.1);
@@ -30,7 +34,8 @@ fn main() {
     let view = VerticalBarView::new()
         .set_x_scale(&x)
         .set_y_scale(&y)
-        .load_data(&data).unwrap();
+        .load_data(&data)
+        .unwrap();
 
     // Generate and save the chart.
     Chart::new()
@@ -43,5 +48,6 @@ fn main() {
         .add_axis_left(&y)
         .add_left_axis_label("Units of Measurement")
         .add_bottom_axis_label("Categories")
-        .save("vertical-bar-chart.svg").unwrap();
+        .save("vertical-bar-chart.svg")
+        .unwrap();
 }

@@ -1,10 +1,10 @@
-use svg::node::Node;
+use crate::chart::Orientation;
+use crate::components::DatumRepresentation;
 use svg::node::element::Group;
 use svg::node::element::Rectangle;
-use svg::node::Text as TextNode;
 use svg::node::element::Text;
-use crate::components::DatumRepresentation;
-use crate::chart::Orientation;
+use svg::node::Node;
+use svg::node::Text as TextNode;
 
 /// Set the position of a bar's label.
 #[derive(Copy, Clone, Debug)]
@@ -49,7 +49,7 @@ impl Bar {
         label_visible: bool,
         rounding_precision: Option<usize>,
         bar_width: f32,
-        offset: f32
+        offset: f32,
     ) -> Self {
         Self {
             blocks,
@@ -65,7 +65,6 @@ impl Bar {
 }
 
 impl DatumRepresentation for Bar {
-
     fn to_svg(&self) -> Result<Group, String> {
         let (bar_group_offset_x, bar_group_offset_y) = {
             match self.orientation {
@@ -75,7 +74,10 @@ impl DatumRepresentation for Bar {
         };
 
         let mut group = Group::new()
-            .set("transform", format!("translate({},{})", bar_group_offset_x, bar_group_offset_y))
+            .set(
+                "transform",
+                format!("translate({},{})", bar_group_offset_x, bar_group_offset_y),
+            )
             .set("class", "bar");
 
         let (x_attr, y_attr, width_attr, height_attr) = match self.orientation {
@@ -97,22 +99,50 @@ impl DatumRepresentation for Bar {
             // Display labels if needed.
             if self.label_visible {
                 let (label_x_attr_value, text_anchor) = match self.label_position {
-                    BarLabelPosition::StartOutside if self.orientation == Orientation::Horizontal => (block.0 - 12_f32, "end"),
-                    BarLabelPosition::StartOutside if self.orientation == Orientation::Vertical => (block.1 + 16_f32, "middle"),
-                    BarLabelPosition::StartInside if self.orientation == Orientation::Horizontal => (block.0 + 12_f32, "start"),
-                    BarLabelPosition::StartInside if self.orientation == Orientation::Vertical => (block.1 - 16_f32, "middle"),
-                    BarLabelPosition::Center if self.orientation == Orientation::Horizontal => (block.0 + (block.1 - block.0) / 2_f32, "middle"),
-                    BarLabelPosition::Center if self.orientation == Orientation::Vertical => (block.0 + (block.1 - block.0) / 2_f32, "middle"),
-                    BarLabelPosition::EndInside if self.orientation == Orientation::Horizontal => (block.1 - 12_f32, "end"),
-                    BarLabelPosition::EndInside if self.orientation == Orientation::Vertical => (block.0 + 16_f32, "middle"),
-                    BarLabelPosition::EndOutside if self.orientation == Orientation::Horizontal => (block.1 + 12_f32, "start"),
-                    BarLabelPosition::EndOutside if self.orientation == Orientation::Vertical => (block.0 - 16_f32, "middle"),
+                    BarLabelPosition::StartOutside
+                        if self.orientation == Orientation::Horizontal =>
+                    {
+                        (block.0 - 12_f32, "end")
+                    }
+                    BarLabelPosition::StartOutside if self.orientation == Orientation::Vertical => {
+                        (block.1 + 16_f32, "middle")
+                    }
+                    BarLabelPosition::StartInside
+                        if self.orientation == Orientation::Horizontal =>
+                    {
+                        (block.0 + 12_f32, "start")
+                    }
+                    BarLabelPosition::StartInside if self.orientation == Orientation::Vertical => {
+                        (block.1 - 16_f32, "middle")
+                    }
+                    BarLabelPosition::Center if self.orientation == Orientation::Horizontal => {
+                        (block.0 + (block.1 - block.0) / 2_f32, "middle")
+                    }
+                    BarLabelPosition::Center if self.orientation == Orientation::Vertical => {
+                        (block.0 + (block.1 - block.0) / 2_f32, "middle")
+                    }
+                    BarLabelPosition::EndInside if self.orientation == Orientation::Horizontal => {
+                        (block.1 - 12_f32, "end")
+                    }
+                    BarLabelPosition::EndInside if self.orientation == Orientation::Vertical => {
+                        (block.0 + 16_f32, "middle")
+                    }
+                    BarLabelPosition::EndOutside if self.orientation == Orientation::Horizontal => {
+                        (block.1 + 12_f32, "start")
+                    }
+                    BarLabelPosition::EndOutside if self.orientation == Orientation::Vertical => {
+                        (block.0 - 16_f32, "middle")
+                    }
                     _ => (0_f32, "middle"), // this is needed to get rid of compiler warning of exhaustively covering match pattern.
                 };
 
                 let label_text = match &self.rounding_precision {
                     None => block.2.to_string(),
-                    Some(nr_of_digits) => format!("{:.1$}", block.2.to_string().parse::<f32>().unwrap(), nr_of_digits)
+                    Some(nr_of_digits) => format!(
+                        "{:.1$}",
+                        block.2.to_string().parse::<f32>().unwrap(),
+                        nr_of_digits
+                    ),
                 };
 
                 let label = Text::new()

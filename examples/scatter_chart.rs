@@ -1,4 +1,4 @@
-use charts::{Chart, ScaleLinear, ScatterView, MarkerType, PointLabelPosition};
+use charts::{Chart, MarkerType, PointLabelPosition, ScaleLinear, ScatterView};
 
 fn main() {
     // Define chart related sizes.
@@ -30,7 +30,8 @@ fn main() {
         .set_y_scale(&y)
         .set_label_position(PointLabelPosition::E)
         .set_marker_type(MarkerType::Square)
-        .load_data(&scatter_data).unwrap();
+        .load_data(&scatter_data)
+        .unwrap();
 
     // Generate and save the chart.
     Chart::new()
@@ -43,5 +44,6 @@ fn main() {
         .add_axis_left(&y)
         .add_left_axis_label("Custom X Axis Label")
         .add_bottom_axis_label("Custom Y Axis Label")
-        .save("scatter-chart.svg").unwrap();
+        .save("scatter-chart.svg")
+        .unwrap();
 }

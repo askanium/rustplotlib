@@ -1,12 +1,12 @@
-use std::string::ToString;
-use svg::node::element::Group;
-use svg::parser::Error;
-use svg::Node;
-use svg::node::Text as TextNode;
-use svg::node::element::Text;
-use crate::{Scale, Chart};
 use crate::components::axis::{AxisLine, AxisTick};
 use crate::scales::ScaleType;
+use crate::{Chart, Scale};
+use std::string::ToString;
+use svg::node::element::Group;
+use svg::node::element::Text;
+use svg::node::Text as TextNode;
+use svg::parser::Error;
+use svg::Node;
 
 /// Enum of possible axis positions on the chart.
 #[derive(Copy, Clone, PartialEq)]
@@ -30,7 +30,11 @@ pub struct Axis {
 
 impl Axis {
     /// Create a new instance of an axis for a chart based on the provided scale and position.
-    fn new<'a, T: ToString>(scale: &'a dyn Scale<T>, position: AxisPosition, chart: &Chart<'a>) -> Self {
+    fn new<'a, T: ToString>(
+        scale: &'a dyn Scale<T>,
+        position: AxisPosition,
+        chart: &Chart<'a>,
+    ) -> Self {
         Self {
             ticks: Self::generate_ticks(scale, position),
             position,
@@ -70,14 +74,18 @@ impl Axis {
     /// Set tick label rotation.
     pub fn set_tick_label_rotation(&mut self, rotation: isize) {
         self.label_rotation = rotation;
-        self.ticks.iter_mut().for_each(|tick| tick.set_label_rotation(rotation));
+        self.ticks
+            .iter_mut()
+            .for_each(|tick| tick.set_label_rotation(rotation));
     }
 
     /// Set the label format.
     pub fn set_tick_label_format(&mut self, format: &str) {
         self.label_format = String::from(format);
         let label_format = self.label_format.as_str();
-        self.ticks.iter_mut().for_each(|tick| tick.set_label_format(label_format));
+        self.ticks
+            .iter_mut()
+            .for_each(|tick| tick.set_label_format(label_format));
     }
 
     /// Return whether the axis has a label or not.
@@ -134,7 +142,10 @@ impl Axis {
     }
 
     /// Generate ticks for the axis based on the scale and position.
-    fn generate_ticks<'a, T: ToString>(scale: &'a dyn Scale<T>, position: AxisPosition) -> Vec<AxisTick> {
+    fn generate_ticks<'a, T: ToString>(
+        scale: &'a dyn Scale<T>,
+        position: AxisPosition,
+    ) -> Vec<AxisTick> {
         let mut ticks = Vec::new();
         let label_offset = {
             if position == AxisPosition::Top || position == AxisPosition::Bottom {
@@ -146,13 +157,21 @@ impl Axis {
 
         for tick in scale.get_ticks() {
             let tick_offset = match position {
-                AxisPosition::Bottom if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
+                AxisPosition::Bottom if scale.get_type() == ScaleType::Band => {
+                    scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32
+                }
                 AxisPosition::Bottom => scale.scale(&tick),
-                AxisPosition::Left if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
+                AxisPosition::Left if scale.get_type() == ScaleType::Band => {
+                    scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32
+                }
                 AxisPosition::Left => scale.scale(&tick),
-                AxisPosition::Top if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
+                AxisPosition::Top if scale.get_type() == ScaleType::Band => {
+                    scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32
+                }
                 AxisPosition::Top => scale.scale(&tick),
-                AxisPosition::Right if scale.get_type() == ScaleType::Band => scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32,
+                AxisPosition::Right if scale.get_type() == ScaleType::Band => {
+                    scale.scale(&tick) + scale.bandwidth().unwrap() / 2_f32
+                }
                 AxisPosition::Right => scale.scale(&tick),
             };
             let axis_tick = AxisTick::new(tick_offset, label_offset, 0, tick.to_string(), position);
@@ -166,9 +185,15 @@ impl Axis {
     fn get_axis_line<'a>(position: AxisPosition, chart: &Chart<'a>) -> AxisLine {
         match position {
             AxisPosition::Top => AxisLine::new(0_f32, 0_f32, chart.get_view_width() as f32, 0_f32),
-            AxisPosition::Right => AxisLine::new(0_f32, 0_f32, 0_f32, chart.get_view_height() as f32),
-            AxisPosition::Bottom => AxisLine::new(0_f32, 0_f32, chart.get_view_width() as f32, 0_f32),
-            AxisPosition::Left => AxisLine::new(0_f32, 0_f32, 0_f32, chart.get_view_height() as f32),
+            AxisPosition::Right => {
+                AxisLine::new(0_f32, 0_f32, 0_f32, chart.get_view_height() as f32)
+            }
+            AxisPosition::Bottom => {
+                AxisLine::new(0_f32, 0_f32, chart.get_view_width() as f32, 0_f32)
+            }
+            AxisPosition::Left => {
+                AxisLine::new(0_f32, 0_f32, 0_f32, chart.get_view_height() as f32)
+            }
         }
     }
 }

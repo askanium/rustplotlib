@@ -1,6 +1,6 @@
+use crate::scales::{Scale, ScaleType};
 use std::collections::HashMap;
 use std::collections::HashSet;
-use crate::scales::{Scale, ScaleType};
 
 /// The scale to represent categorical data.
 #[derive(Debug)]

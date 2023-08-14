@@ -15,7 +15,11 @@ fn main() {
     // Create a band scale that maps ["A", "B", "C"] categories to values in the [0, availableHeight]
     // range (the height of the chart without the margins).
     let y = ScaleBand::new()
-        .set_domain(vec![String::from("A"), String::from("B"), String::from("C")])
+        .set_domain(vec![
+            String::from("A"),
+            String::from("B"),
+            String::from("C"),
+        ])
         .set_range(vec![0, height - top - bottom]);
 
     // You can use your own iterable as data as long as its items implement the `BarDatum` trait.
@@ -25,7 +29,8 @@ fn main() {
     let view = HorizontalBarView::new()
         .set_x_scale(&x)
         .set_y_scale(&y)
-        .load_data(&data).unwrap();
+        .load_data(&data)
+        .unwrap();
 
     // Generate and save the chart.
     Chart::new()
@@ -39,5 +44,6 @@ fn main() {
         .add_axis_left(&y)
         .add_left_axis_label("Y Axis Custom Label")
         .add_bottom_axis_label("X Axis Custom Label")
-        .save("horizontal-bar-chart.svg").unwrap();
+        .save("horizontal-bar-chart.svg")
+        .unwrap();
 }

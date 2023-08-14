@@ -24,28 +24,28 @@
 
 mod chart;
 // mod view;
+mod axis;
+mod colors;
+mod components;
+mod legend;
 mod scales;
 mod views;
-mod components;
-mod colors;
-mod axis;
-mod legend;
 
-pub use crate::chart::Chart;
-pub use crate::scales::band::ScaleBand;
-pub use crate::scales::linear::ScaleLinear;
-pub use crate::scales::Scale;
-pub use crate::views::vertical_bar::VerticalBarView;
-pub use crate::views::horizontal_bar::HorizontalBarView;
-pub use crate::views::scatter::ScatterView;
-pub use crate::views::line::LineSeriesView;
-pub use crate::views::area::AreaSeriesView;
-pub use crate::views::datum::{BarDatum, PointDatum};
 pub use crate::axis::{Axis, AxisPosition};
+pub use crate::chart::Chart;
+pub use crate::colors::Color;
 pub use crate::components::bar::BarLabelPosition;
 pub use crate::components::line::LineSeries;
 pub use crate::components::scatter::{MarkerType, PointLabelPosition};
-pub use crate::colors::Color;
+pub use crate::scales::band::ScaleBand;
+pub use crate::scales::linear::ScaleLinear;
+pub use crate::scales::Scale;
+pub use crate::views::area::AreaSeriesView;
+pub use crate::views::datum::{BarDatum, PointDatum};
+pub use crate::views::horizontal_bar::HorizontalBarView;
+pub use crate::views::line::LineSeriesView;
+pub use crate::views::scatter::ScatterView;
+pub use crate::views::vertical_bar::VerticalBarView;
 
 #[cfg(test)]
 mod tests {

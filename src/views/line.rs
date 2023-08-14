@@ -1,14 +1,14 @@
-use std::collections::HashMap;
-use std::fmt::Display;
-use svg::node::Node;
-use svg::node::element::Group;
-use crate::components::scatter::{ScatterPoint, MarkerType, PointLabelPosition};
 use crate::colors::Color;
-use crate::{Scale, LineSeries};
+use crate::components::legend::{LegendEntry, LegendMarkerType};
+use crate::components::scatter::{MarkerType, PointLabelPosition, ScatterPoint};
+use crate::components::DatumRepresentation;
 use crate::views::datum::PointDatum;
 use crate::views::View;
-use crate::components::DatumRepresentation;
-use crate::components::legend::{LegendEntry, LegendMarkerType};
+use crate::{LineSeries, Scale};
+use std::collections::HashMap;
+use std::fmt::Display;
+use svg::node::element::Group;
+use svg::node::Node;
 
 /// A View that represents data as a scatter plot.
 pub struct LineSeriesView<'a, T: Display, U: Display> {
@@ -95,12 +95,20 @@ impl<'a, T: Display, U: Display> LineSeriesView<'a, T, U> {
     /// Load and process a dataset of BarDatum points.
     pub fn load_data(mut self, data: &Vec<impl PointDatum<T, U>>) -> Result<Self, String> {
         match self.x_scale {
-            Some(_) => {},
-            _ => return Err("Please provide a scale for the X dimension before loading data".to_string()),
+            Some(_) => {}
+            _ => {
+                return Err(
+                    "Please provide a scale for the X dimension before loading data".to_string(),
+                )
+            }
         }
         match self.y_scale {
-            Some(_) => {},
-            _ => return Err("Please provide a scale for the Y dimension before loading data".to_string()),
+            Some(_) => {}
+            _ => {
+                return Err(
+                    "Please provide a scale for the Y dimension before loading data".to_string(),
+                )
+            }
         }
 
         // If no keys were explicitly provided, extract the keys from the data.
@@ -112,32 +120,50 @@ impl<'a, T: Display, U: Display> LineSeriesView<'a, T, U> {
         // should keep the order defined in the `keys` attribute.
         for (i, key) in self.keys.iter_mut().enumerate() {
             // Map the key to the corresponding color.
-            self.color_map.insert(key.clone(), self.colors[i % self.colors.len()].as_hex());
+            self.color_map
+                .insert(key.clone(), self.colors[i % self.colors.len()].as_hex());
         }
 
         for key in self.keys.iter() {
+            let points = data
+                .iter()
+                .filter(|datum| &datum.get_key() == key)
+                .map(|datum| {
+                    let scaled_x = self.x_scale.unwrap().scale(&datum.get_x());
+                    let scaled_y = self.y_scale.unwrap().scale(&datum.get_y());
+                    let y_bandwidth_offset = {
+                        if self.y_scale.unwrap().is_range_reversed() {
+                            -self.y_scale.unwrap().bandwidth().unwrap() / 2_f32
+                        } else {
+                            self.y_scale.unwrap().bandwidth().unwrap() / 2_f32
+                        }
+                    };
+                    let x_bandwidth_offset = {
+                        if self.x_scale.unwrap().is_range_reversed() {
+                            -self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
+                        } else {
+                            self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
+                        }
+                    };
+                    ScatterPoint::new(
+                        scaled_x + x_bandwidth_offset,
+                        scaled_y + y_bandwidth_offset,
+                        self.marker_type,
+                        5,
+                        datum.get_x(),
+                        datum.get_y(),
+                        self.label_position,
+                        self.labels_visible,
+                        true,
+                        self.color_map.get(&datum.get_key()).unwrap().clone(),
+                    )
+                })
+                .collect::<Vec<ScatterPoint<T, U>>>();
 
-            let points = data.iter().filter(|datum| &datum.get_key() == key).map(|datum| {
-                let scaled_x = self.x_scale.unwrap().scale(&datum.get_x());
-                let scaled_y = self.y_scale.unwrap().scale(&datum.get_y());
-                let y_bandwidth_offset = {
-                    if self.y_scale.unwrap().is_range_reversed() {
-                        -self.y_scale.unwrap().bandwidth().unwrap() / 2_f32
-                    } else {
-                        self.y_scale.unwrap().bandwidth().unwrap() / 2_f32
-                    }
-                };
-                let x_bandwidth_offset = {
-                    if self.x_scale.unwrap().is_range_reversed() {
-                        -self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
-                    } else {
-                        self.x_scale.unwrap().bandwidth().unwrap() / 2_f32
-                    }
-                };
-                ScatterPoint::new(scaled_x + x_bandwidth_offset, scaled_y + y_bandwidth_offset, self.marker_type, 5, datum.get_x(), datum.get_y(), self.label_position, self.labels_visible, true,self.color_map.get(&datum.get_key()).unwrap().clone())
-            }).collect::<Vec<ScatterPoint<T, U>>>();
-
-            self.entries.push(LineSeries::new(points, self.color_map.get(key).unwrap().clone()));
+            self.entries.push(LineSeries::new(
+                points,
+                self.color_map.get(key).unwrap().clone(),
+            ));
         }
 
         Ok(self)
@@ -150,14 +176,13 @@ impl<'a, T: Display, U: Display> LineSeriesView<'a, T, U> {
 
         for datum in data.iter() {
             match map.insert(datum.get_key(), 0) {
-                Some(_) => {},
+                Some(_) => {}
                 None => keys.push(datum.get_key()),
             }
         }
 
         keys
     }
-
 }
 
 impl<'a, T: Display, U: Display> View<'a> for LineSeriesView<'a, T, U> {
@@ -181,10 +206,20 @@ impl<'a, T: Display, U: Display> View<'a> for LineSeriesView<'a, T, U> {
         // the dataset consists only of X and Y dimension values), return
         // the custom data label.
         if self.keys.len() == 1 && self.keys[0].len() == 0 {
-            entries.push(LegendEntry::new(LegendMarkerType::Line, self.color_map.get(&self.keys[0]).unwrap().clone(), String::from("none"), self.custom_data_label.clone()));
+            entries.push(LegendEntry::new(
+                LegendMarkerType::Line,
+                self.color_map.get(&self.keys[0]).unwrap().clone(),
+                String::from("none"),
+                self.custom_data_label.clone(),
+            ));
         } else {
             for key in self.keys.iter() {
-                entries.push(LegendEntry::new(LegendMarkerType::Line, self.color_map.get(key).unwrap().clone(), String::from("none"), key.clone()));
+                entries.push(LegendEntry::new(
+                    LegendMarkerType::Line,
+                    self.color_map.get(key).unwrap().clone(),
+                    String::from("none"),
+                    key.clone(),
+                ));
             }
         }
 
