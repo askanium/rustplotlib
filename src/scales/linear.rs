@@ -1,5 +1,5 @@
-use std::cmp::{max, Ordering};
 use crate::scales::{Scale, ScaleType};
+use std::cmp::{max, Ordering};
 
 /// The scale to represent categorical data.
 #[derive(Debug)]

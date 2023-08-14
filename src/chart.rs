@@ -1,16 +1,16 @@
-use std::string::ToString;
+use crate::axis::AxisPosition;
+use crate::components::legend::LegendEntry;
+use crate::legend::Legend;
+use crate::views::View;
+use crate::{Axis, Scale};
 use std::ffi::OsStr;
 use std::path::Path;
+use std::string::ToString;
 use svg;
 use svg::node::element::Group;
-use svg::Node;
-use svg::node::Text as TextNode;
 use svg::node::element::Text;
-use crate::{Axis, Scale};
-use crate::views::View;
-use crate::axis::AxisPosition;
-use crate::legend::Legend;
-use crate::components::legend::LegendEntry;
+use svg::node::Text as TextNode;
+use svg::Node;
 
 /// Define the orientation enum to aid in rendering and business logic.
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -204,7 +204,7 @@ impl<'a> Chart<'a> {
     pub fn set_bottom_axis_tick_label_rotation(mut self, rotation: isize) -> Self {
         match &mut self.x_axis_bottom {
             Some(axis) => axis.set_tick_label_rotation(rotation),
-            None => {},
+            None => {}
         }
         self
     }
@@ -213,7 +213,7 @@ impl<'a> Chart<'a> {
     pub fn set_top_axis_tick_label_rotation(mut self, rotation: isize) -> Self {
         match &mut self.x_axis_top {
             Some(axis) => axis.set_tick_label_rotation(rotation),
-            None => {},
+            None => {}
         }
         self
     }
@@ -222,7 +222,7 @@ impl<'a> Chart<'a> {
     pub fn set_left_axis_tick_label_rotation(mut self, rotation: isize) -> Self {
         match &mut self.y_axis_left {
             Some(axis) => axis.set_tick_label_rotation(rotation),
-            None => {},
+            None => {}
         }
         self
     }
@@ -231,7 +231,7 @@ impl<'a> Chart<'a> {
     pub fn set_right_axis_tick_label_rotation(mut self, rotation: isize) -> Self {
         match &mut self.y_axis_right {
             Some(axis) => axis.set_tick_label_rotation(rotation),
-            None => {},
+            None => {}
         }
         self
     }
@@ -240,7 +240,7 @@ impl<'a> Chart<'a> {
     pub fn set_left_axis_tick_label_format(mut self, format: &str) -> Self {
         match &mut self.y_axis_left {
             Some(axis) => axis.set_tick_label_format(format),
-            None => {},
+            None => {}
         }
         self
     }
@@ -249,7 +249,7 @@ impl<'a> Chart<'a> {
     pub fn set_right_axis_tick_label_format(mut self, format: &str) -> Self {
         match &mut self.y_axis_right {
             Some(axis) => axis.set_tick_label_format(format),
-            None => {},
+            None => {}
         }
         self
     }
@@ -258,7 +258,7 @@ impl<'a> Chart<'a> {
     pub fn set_top_axis_tick_label_format(mut self, format: &str) -> Self {
         match &mut self.x_axis_top {
             Some(axis) => axis.set_tick_label_format(format),
-            None => {},
+            None => {}
         }
         self
     }
@@ -267,61 +267,82 @@ impl<'a> Chart<'a> {
     pub fn set_bottom_axis_tick_label_format(mut self, format: &str) -> Self {
         match &mut self.x_axis_bottom {
             Some(axis) => axis.set_tick_label_format(format),
-            None => {},
+            None => {}
         }
         self
     }
 
     /// Generate the SVG for the chart and its components.
     fn to_svg(&self) -> Result<Group, String> {
-        let mut group = Group::new()
-            .set("class", "g-chart");
+        let mut group = Group::new().set("class", "g-chart");
 
         // Add chart title
         if self.title.len() > 0 {
             let title_group = Group::new()
                 .set("class", "g-title")
                 .set("transform", format!("translate({},{})", self.width / 2, 25))
-                .add(Text::new()
-                    .set("x", 0)
-                    .set("y", 0)
-                    .set("dy", ".35em")
-                    .set("fill", "#777")
-                    .set("text-anchor", "middle")
-                    .set("font-size", "24px")
-                    .set("font-family", "sans-serif")
-                    .add(TextNode::new(&self.title))
+                .add(
+                    Text::new()
+                        .set("x", 0)
+                        .set("y", 0)
+                        .set("dy", ".35em")
+                        .set("fill", "#777")
+                        .set("text-anchor", "middle")
+                        .set("font-size", "24px")
+                        .set("font-family", "sans-serif")
+                        .add(TextNode::new(&self.title)),
                 );
             group.append(title_group);
         }
 
         if let Some(ref axis) = self.x_axis_top {
             let mut axis_group = axis.to_svg().unwrap();
-            axis_group.assign("transform", format!("translate({},{})", self.margin_left, self.margin_top));
+            axis_group.assign(
+                "transform",
+                format!("translate({},{})", self.margin_left, self.margin_top),
+            );
             group.append(axis_group);
         };
 
         if let Some(ref axis) = self.x_axis_bottom {
             let mut axis_group = axis.to_svg().unwrap();
-            axis_group.assign("transform", format!("translate({},{})", self.margin_left, self.height - self.margin_bottom));
+            axis_group.assign(
+                "transform",
+                format!(
+                    "translate({},{})",
+                    self.margin_left,
+                    self.height - self.margin_bottom
+                ),
+            );
             group.append(axis_group);
         };
 
         if let Some(ref axis) = self.y_axis_left {
             let mut axis_group = axis.to_svg().unwrap();
-            axis_group.assign("transform", format!("translate({},{})", self.margin_left, self.margin_top));
+            axis_group.assign(
+                "transform",
+                format!("translate({},{})", self.margin_left, self.margin_top),
+            );
             group.append(axis_group);
         };
 
         if let Some(ref axis) = self.y_axis_right {
             let mut axis_group = axis.to_svg().unwrap();
-            axis_group.assign("transform", format!("translate({},{})", self.width - self.margin_right, self.margin_top));
+            axis_group.assign(
+                "transform",
+                format!(
+                    "translate({},{})",
+                    self.width - self.margin_right,
+                    self.margin_top
+                ),
+            );
             group.append(axis_group);
         };
 
-        let mut view_group = Group::new()
-            .set("class", "g-view")
-            .set("transform", format!("translate({},{})", self.margin_left, self.margin_top));
+        let mut view_group = Group::new().set("class", "g-view").set(
+            "transform",
+            format!("translate({},{})", self.margin_left, self.margin_top),
+        );
 
         for view in self.views.iter() {
             view_group.append(view.to_svg()?);
@@ -345,7 +366,7 @@ impl<'a> Chart<'a> {
                     width = self.width - self.margin_right - self.margin_left;
                     x_offset = self.margin_left;
                     y_offset = axis_height;
-                },
+                }
                 AxisPosition::Bottom => {
                     // Compute the height of the bottom axis that should serve
                     // as an offset for the legend.
@@ -366,7 +387,7 @@ impl<'a> Chart<'a> {
                     width = self.width - self.margin_right - self.margin_left;
                     x_offset = self.margin_left;
                     y_offset = self.height - self.margin_bottom + axis_height;
-                },
+                }
                 AxisPosition::Left => {
                     let axis_width = {
                         if let Some(ref axis) = self.y_axis_left {
@@ -382,7 +403,7 @@ impl<'a> Chart<'a> {
                     width = self.margin_left - axis_width - 10; // 10 is described in the comment below
                     x_offset = 10; // always have a 10px padding from the left of the chart
                     y_offset = self.margin_top;
-                },
+                }
                 AxisPosition::Right => {
                     let axis_width = {
                         if let Some(ref axis) = self.y_axis_right {
@@ -401,7 +422,12 @@ impl<'a> Chart<'a> {
                 }
             };
 
-            let legend_entries = self.views.iter().map(|view| view.get_legend_entries()).flatten().collect::<Vec<LegendEntry>>();
+            let legend_entries = self
+                .views
+                .iter()
+                .map(|view| view.get_legend_entries())
+                .flatten()
+                .collect::<Vec<LegendEntry>>();
             let legend = Legend::new(legend_entries, width as usize);
             let mut legend_group = legend.to_svg()?;
             legend_group.assign("transform", format!("translate({},{})", x_offset, y_offset));
@@ -413,25 +439,29 @@ impl<'a> Chart<'a> {
     }
 
     /// Save the chart to a file
-    pub fn save<P>(self, path: P) -> Result<(), String> where
-        P: AsRef<Path>
+    pub fn save<P>(self, path: P) -> Result<(), String>
+    where
+        P: AsRef<Path>,
     {
         match path.as_ref().extension().and_then(OsStr::to_str) {
-            Some("svg") => {
-                match self.to_svg() {
-                    Ok(svg_content) => {
-                        let document = svg::Document::new()
-                            .set("width", self.width)
-                            .set("height", self.height)
-                            .set("viewBox", (0, 0, self.width, self.height))
-                            .add(svg_content);
+            Some("svg") => match self.to_svg() {
+                Ok(svg_content) => {
+                    let document = svg::Document::new()
+                        .set("width", self.width)
+                        .set("height", self.height)
+                        .set("viewBox", (0, 0, self.width, self.height))
+                        .add(svg_content);
 
-                        svg::save(path, &document).unwrap()
-                    },
-                    Err(e) => return Err(format!("Encountered an error while saving the chart: {:?}", e)),
+                    svg::save(path, &document).unwrap()
+                }
+                Err(e) => {
+                    return Err(format!(
+                        "Encountered an error while saving the chart: {:?}",
+                        e
+                    ))
                 }
             },
-            _ => {},
+            _ => {}
         };
         Ok(())
     }

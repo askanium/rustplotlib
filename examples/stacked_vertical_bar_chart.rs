@@ -1,4 +1,4 @@
-use charts::{Chart, VerticalBarView, ScaleBand, ScaleLinear, BarLabelPosition};
+use charts::{BarLabelPosition, Chart, ScaleBand, ScaleLinear, VerticalBarView};
 
 fn main() {
     // Define chart related sizes.
@@ -9,7 +9,11 @@ fn main() {
     // Create a band scale that maps ["A", "B", "C"] categories to values in [0, availableWidth]
     // range (the width of the chart without the margins).
     let x = ScaleBand::new()
-        .set_domain(vec![String::from("A"), String::from("B"), String::from("C")])
+        .set_domain(vec![
+            String::from("A"),
+            String::from("B"),
+            String::from("C"),
+        ])
         .set_range(vec![0, width - left - right]);
 
     // Create a linear scale that will interpolate values in [0, 100] range to corresponding
@@ -22,7 +26,13 @@ fn main() {
         .set_range(vec![height - top - bottom, 0]);
 
     // You can use your own iterable as data as long as its items implement the `BarDatum` trait.
-    let data = vec![("A", 70, "foo"), ("B", 10, "foo"), ("C", 30, "foo"), ("A", 20, "bar"), ("A", 5, "baz")];
+    let data = vec![
+        ("A", 70, "foo"),
+        ("B", 10, "foo"),
+        ("C", 30, "foo"),
+        ("A", 20, "bar"),
+        ("A", 5, "baz"),
+    ];
 
     // Create VerticalBar view that is going to represent the data as vertical bars.
     let view = VerticalBarView::new()
@@ -30,7 +40,8 @@ fn main() {
         .set_y_scale(&y)
         // .set_label_visibility(false)  // <-- uncomment this line to hide bar value labels
         .set_label_position(BarLabelPosition::Center)
-        .load_data(&data).unwrap();
+        .load_data(&data)
+        .unwrap();
 
     // Generate and save the chart.
     Chart::new()
@@ -43,5 +54,6 @@ fn main() {
         .add_axis_left(&y)
         .add_left_axis_label("Units of Measurement")
         .add_bottom_axis_label("Categories")
-        .save("stacked-vertical-bar-chart.svg").unwrap();
+        .save("stacked-vertical-bar-chart.svg")
+        .unwrap();
 }

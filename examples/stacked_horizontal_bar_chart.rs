@@ -1,4 +1,4 @@
-use charts::{Chart, HorizontalBarView, ScaleBand, ScaleLinear, BarLabelPosition};
+use charts::{BarLabelPosition, Chart, HorizontalBarView, ScaleBand, ScaleLinear};
 
 fn main() {
     // Define chart related sizes.
@@ -15,18 +15,29 @@ fn main() {
     // Create a band scale that maps ["A", "B", "C"] categories to values in the [0, availableHeight]
     // range (the height of the chart without the margins).
     let y = ScaleBand::new()
-        .set_domain(vec![String::from("A"), String::from("B"), String::from("C")])
+        .set_domain(vec![
+            String::from("A"),
+            String::from("B"),
+            String::from("C"),
+        ])
         .set_range(vec![0, height - top - bottom]);
 
     // You can use your own iterable as data as long as its items implement the `BarDatum` trait.
-    let data = vec![("A", 70, "foo"), ("B", 10, "foo"), ("C", 30, "foo"), ("A", 20, "bar"), ("A", 5, "baz")];
+    let data = vec![
+        ("A", 70, "foo"),
+        ("B", 10, "foo"),
+        ("C", 30, "foo"),
+        ("A", 20, "bar"),
+        ("A", 5, "baz"),
+    ];
 
     // Create VerticalBar view that is going to represent the data as vertical bars.
     let view = HorizontalBarView::new()
         .set_x_scale(&x)
         .set_y_scale(&y)
         .set_label_position(BarLabelPosition::Center)
-        .load_data(&data).unwrap();
+        .load_data(&data)
+        .unwrap();
 
     // Generate and save the chart.
     Chart::new()
@@ -39,5 +50,6 @@ fn main() {
         .add_axis_left(&y)
         .add_left_axis_label("Y Axis Custom Label")
         .add_bottom_axis_label("X Axis Custom Label")
-        .save("stacked-horizontal-bar-chart.svg").unwrap();
+        .save("stacked-horizontal-bar-chart.svg")
+        .unwrap();
 }

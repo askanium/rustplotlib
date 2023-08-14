@@ -1,4 +1,4 @@
-use charts::{Chart, ScaleLinear, MarkerType, PointLabelPosition, LineSeriesView};
+use charts::{Chart, LineSeriesView, MarkerType, PointLabelPosition, ScaleLinear};
 
 fn main() {
     // Define chart related sizes.
@@ -30,7 +30,8 @@ fn main() {
         .set_y_scale(&y)
         .set_marker_type(MarkerType::Circle)
         .set_label_position(PointLabelPosition::N)
-        .load_data(&line_data).unwrap();
+        .load_data(&line_data)
+        .unwrap();
 
     // Generate and save the chart.
     Chart::new()
@@ -43,5 +44,6 @@ fn main() {
         .add_axis_left(&y)
         .add_left_axis_label("Custom Y Axis Label")
         .add_bottom_axis_label("Custom X Axis Label")
-        .save("line-chart.svg").unwrap();
+        .save("line-chart.svg")
+        .unwrap();
 }

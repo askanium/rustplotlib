@@ -1,6 +1,6 @@
+use crate::components::legend::LegendEntry;
 use svg::node::element::Group;
 use svg::Node;
-use crate::components::legend::LegendEntry;
 
 pub(crate) struct Legend {
     width: usize,
@@ -10,10 +10,7 @@ pub(crate) struct Legend {
 impl Legend {
     /// Create a new legend instance.
     pub fn new(entries: Vec<LegendEntry>, width: usize) -> Self {
-        Self {
-            entries,
-            width,
-        }
+        Self { entries, width }
     }
 
     pub fn to_svg(&self) -> Result<Group, String> {
@@ -34,7 +31,14 @@ impl Legend {
             }
 
             let mut entry_group = entry.to_svg()?;
-            entry_group.assign("transform", format!("translate({},{})", acc_row_width, current_row_offset * legend_row_height));
+            entry_group.assign(
+                "transform",
+                format!(
+                    "translate({},{})",
+                    acc_row_width,
+                    current_row_offset * legend_row_height
+                ),
+            );
             group.append(entry_group);
 
             acc_row_width += max_entry_length + gap_between_legend_entries;

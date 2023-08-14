@@ -1,4 +1,4 @@
-use charts::{Chart, ScaleLinear, ScatterView, MarkerType, Color, PointLabelPosition};
+use charts::{Chart, Color, MarkerType, PointLabelPosition, ScaleLinear, ScatterView};
 
 fn main() {
     // Define chart related sizes.
@@ -22,7 +22,12 @@ fn main() {
         .set_range(vec![height - top - bottom, 0]);
 
     // You can use your own iterable as data as long as its items implement the `PointDatum` trait.
-    let scatter_data = vec![(120, 90, "foo"), (12, 54, "foo"), (100, 40, "bar"), (180, 10, "baz")];
+    let scatter_data = vec![
+        (120, 90, "foo"),
+        (12, 54, "foo"),
+        (100, 40, "bar"),
+        (180, 10, "baz"),
+    ];
 
     // Create Scatter view that is going to represent the data as points.
     let scatter_view = ScatterView::new()
@@ -31,7 +36,8 @@ fn main() {
         .set_label_position(PointLabelPosition::E)
         .set_marker_type(MarkerType::Circle)
         .set_colors(Color::color_scheme_dark())
-        .load_data(&scatter_data).unwrap();
+        .load_data(&scatter_data)
+        .unwrap();
 
     // Generate and save the chart.
     Chart::new()
@@ -44,5 +50,6 @@ fn main() {
         .add_axis_left(&y)
         .add_left_axis_label("Custom X Axis Label")
         .add_bottom_axis_label("Custom Y Axis Label")
-        .save("scatter-chart-multiple-keys.svg").unwrap();
+        .save("scatter-chart-multiple-keys.svg")
+        .unwrap();
 }
